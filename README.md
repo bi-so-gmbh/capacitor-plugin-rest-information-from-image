@@ -126,6 +126,8 @@ If the value is greater than 1 the detector will not be visible on the screen.
 | **`focusLineThickness`**       | <code>number</code>  |
 | **`drawFocusBackground`**      | <code>boolean</code> |
 | **`focusBackgroundColor`**     | <code>string</code>  |
+| **`loadingCircleColor`**       | <code>string</code>  |
+| **`loadingCircleSize`**        | <code>number</code>  |
 
 
 ### Type Aliases

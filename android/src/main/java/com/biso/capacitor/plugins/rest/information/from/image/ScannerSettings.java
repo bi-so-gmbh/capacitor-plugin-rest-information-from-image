@@ -1,5 +1,7 @@
 package com.biso.capacitor.plugins.rest.information.from.image;
 
+import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.LOADING_CIRCLE_COLOR;
+import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.LOADING_CIRCLE_SIZE;
 import static com.biso.capacitor.plugins.rest.information.from.image.Utils.getAspectRatioFromString;
 import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.BEEP_ON_SUCCESS;
 import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.DETECTOR_ASPECT_RATIO;
@@ -25,6 +27,7 @@ import java.util.Optional;
 import org.json.JSONObject;
 
 public class ScannerSettings implements Parcelable {
+
   private String aspectRatio = "1:1";
   private float aspectRatioF = 1;
   private double detectorSize = 0.5;
@@ -39,15 +42,17 @@ public class ScannerSettings implements Parcelable {
   private String focusBackgroundColor = "#CCFFFFFF";
   private boolean beepOnSuccess = false;
   private boolean vibrateOnSuccess = false;
+  private String loadingCircleColor = "#FF00FF";
+  private int loadingCircleSize = 20;
 
   public ScannerSettings(JSONObject settings) {
     Iterator<String> keys = settings.keys();
 
-    while(keys.hasNext()) {
+    while (keys.hasNext()) {
       String key = keys.next();
 
       Optional<Settings> setting = Settings.get(key);
-      if(setting.isPresent()) {
+      if (setting.isPresent()) {
         switch (setting.get()) {
           case DETECTOR_ASPECT_RATIO:
             aspectRatio = settings.optString(DETECTOR_ASPECT_RATIO.value(), getAspectRatio());
@@ -97,6 +102,13 @@ public class ScannerSettings implements Parcelable {
           case VIBRATE_ON_SUCCESS:
             vibrateOnSuccess = settings.optBoolean(VIBRATE_ON_SUCCESS.value(),
                 isVibrateOnSuccess());
+            break;
+          case LOADING_CIRCLE_COLOR:
+            loadingCircleColor = settings.optString(LOADING_CIRCLE_COLOR.value(),
+                getLoadingCircleColor());
+            break;
+          case LOADING_CIRCLE_SIZE:
+            loadingCircleSize = settings.optInt(LOADING_CIRCLE_SIZE.value(), getLoadingCircleSize());
             break;
           default:
             Log.e("SETTINGS", "No known setting for " + key);
@@ -164,6 +176,14 @@ public class ScannerSettings implements Parcelable {
     return vibrateOnSuccess;
   }
 
+  public String getLoadingCircleColor() {
+    return loadingCircleColor;
+  }
+
+  public int getLoadingCircleSize() {
+    return loadingCircleSize;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -186,19 +206,31 @@ public class ScannerSettings implements Parcelable {
         && getAspectRatio().equals(that.getAspectRatio()) && getFocusRectColor().equals(
         that.getFocusRectColor())
         && getFocusLineColor().equals(that.getFocusLineColor()) && getFocusBackgroundColor().equals(
-        that.getFocusBackgroundColor());
+        that.getFocusBackgroundColor())
+        && getLoadingCircleColor().equals(that.getLoadingCircleColor())
+        && getLoadingCircleSize() == that.getLoadingCircleSize();
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getAspectRatio(), getAspectRatioF(), getDetectorSize(),
+    return Objects.hash(
+        getAspectRatio(),
+        getAspectRatioF(),
+        getDetectorSize(),
         isDrawFocusRect(),
-        getFocusRectColor(), getFocusRectBorderRadius(), getFocusRectBorderThickness(),
+        getFocusRectColor(),
+        getFocusRectBorderRadius(),
+        getFocusRectBorderThickness(),
         isDrawFocusLine(),
-        getFocusLineColor(), getFocusLineThickness(), isDrawFocusBackground(),
+        getFocusLineColor(),
+        getFocusLineThickness(),
+        isDrawFocusBackground(),
         getFocusBackgroundColor(),
         isBeepOnSuccess(),
-        isVibrateOnSuccess());
+        isVibrateOnSuccess(),
+        getLoadingCircleColor(),
+        getLoadingCircleSize()
+    );
   }
 
   @Override
@@ -222,23 +254,8 @@ public class ScannerSettings implements Parcelable {
     dest.writeString(this.getFocusBackgroundColor());
     dest.writeByte(this.isBeepOnSuccess() ? (byte) 1 : (byte) 0);
     dest.writeByte(this.isVibrateOnSuccess() ? (byte) 1 : (byte) 0);
-  }
-
-  public void readFromParcel(Parcel source) {
-    this.aspectRatio = source.readString();
-    this.aspectRatioF = source.readFloat();
-    this.detectorSize = source.readDouble();
-    this.drawFocusRect = source.readByte() != 0;
-    this.focusRectColor = source.readString();
-    this.focusRectBorderRadius = source.readInt();
-    this.focusRectBorderThickness = source.readInt();
-    this.drawFocusLine = source.readByte() != 0;
-    this.focusLineColor = source.readString();
-    this.focusLineThickness = source.readInt();
-    this.drawFocusBackground = source.readByte() != 0;
-    this.focusBackgroundColor = source.readString();
-    this.beepOnSuccess = source.readByte() != 0;
-    this.vibrateOnSuccess = source.readByte() != 0;
+    dest.writeString(this.getLoadingCircleColor());
+    dest.writeInt(this.getLoadingCircleSize());
   }
 
   protected ScannerSettings(Parcel in) {
@@ -256,6 +273,8 @@ public class ScannerSettings implements Parcelable {
     this.focusBackgroundColor = in.readString();
     this.beepOnSuccess = in.readByte() != 0;
     this.vibrateOnSuccess = in.readByte() != 0;
+    this.loadingCircleColor = in.readString();
+    this.loadingCircleSize = in.readInt();
   }
 
   public static final Creator<ScannerSettings> CREATOR = new Creator<ScannerSettings>() {
@@ -286,7 +305,9 @@ public class ScannerSettings implements Parcelable {
     DRAW_FOCUS_BACKGROUND("drawFocusBackground"),
     FOCUS_BACKGROUND_COLOR("focusBackgroundColor"),
     BEEP_ON_SUCCESS("beepOnSuccess"),
-    VIBRATE_ON_SUCCESS("vibrateOnSuccess");
+    VIBRATE_ON_SUCCESS("vibrateOnSuccess"),
+    LOADING_CIRCLE_COLOR("loadingCircleColor"),
+    LOADING_CIRCLE_SIZE("loadingCircleSize");
 
     private final String option;
 

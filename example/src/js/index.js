@@ -34,7 +34,9 @@ const options = {
   focusLineColor: "#ff2d37",
   focusLineThickness: 2,
   drawFocusBackground: false,
-  focusBackgroundColor: "#66FFFFFF"
+  focusBackgroundColor: "#66FFFFFF",
+  loadingCircleColor: "#888888",
+  loadingCircleSize: 30
 };
 
 init();

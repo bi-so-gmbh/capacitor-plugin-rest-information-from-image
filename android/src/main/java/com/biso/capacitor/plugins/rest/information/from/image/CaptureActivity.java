@@ -7,6 +7,8 @@ import android.Manifest.permission;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.os.Build.VERSION;
@@ -15,6 +17,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission;
@@ -100,6 +103,12 @@ public class CaptureActivity extends AppCompatActivity {
     constraintLayout.setOnClickListener(v -> {
       if (readyToTakePicture) {
         readyToTakePicture = false;
+        progressBar.setIndeterminateTintList(
+            ColorStateList.valueOf(Color.parseColor(settings.getLoadingCircleColor())));
+        // original size is 100dp so lets scale it to match the setting
+        float scale = settings.getLoadingCircleSize() / 100f;
+        progressBar.setScaleX(scale);
+        progressBar.setScaleY(scale);
         progressBar.setVisibility(View.VISIBLE);
         imageCapture.takePicture(executor,
             new ImageCaptureListener(httpRequest, this::finishWithSuccess));
@@ -112,7 +121,8 @@ public class CaptureActivity extends AppCompatActivity {
       LiveData<Integer> flashState = camera.getCameraInfo().getTorchState();
       if (flashState.getValue() != null) {
         boolean state = flashState.getValue() == 1;
-        torchButton.setBackgroundResource(!state ? R.drawable.torch_active : R.drawable.torch_inactive);
+        torchButton.setBackgroundResource(
+            !state ? R.drawable.torch_active : R.drawable.torch_inactive);
         camera.getCameraControl().enableTorch(!state);
       }
     });

@@ -9,19 +9,21 @@ export interface RestInformationPlugin {
  * If the value is greater than 1 the detector will not be visible on the screen.
  */
 export interface ISettings {
-  beepOnSuccess?: boolean;
-  vibrateOnSuccess?: boolean;
-  detectorSize?: number;
-  detectorAspectRatio?: string;
-  drawFocusRect?: boolean;
-  focusRectColor?: string;
-  focusRectBorderRadius?: number;
-  focusRectBorderThickness?: number;
-  drawFocusLine?: boolean;
-  focusLineColor?: string;
-  focusLineThickness?: number;
-  drawFocusBackground?: boolean;
-  focusBackgroundColor?: string;
+  beepOnSuccess?: boolean
+  vibrateOnSuccess?: boolean
+  detectorSize?: number
+  detectorAspectRatio?: string
+  drawFocusRect?: boolean
+  focusRectColor?: string
+  focusRectBorderRadius?: number
+  focusRectBorderThickness?: number
+  drawFocusLine?: boolean
+  focusLineColor?: string
+  focusLineThickness?: number
+  drawFocusBackground?: boolean
+  focusBackgroundColor?: string
+  loadingCircleColor?: string
+  loadingCircleSize?: number
 }
 
 /**
