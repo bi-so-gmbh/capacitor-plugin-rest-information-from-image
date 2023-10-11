@@ -13,15 +13,12 @@ import android.graphics.RectF;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
-import java.util.ArrayList;
 import org.json.JSONObject;
 
 public class CameraOverlay extends SurfaceView implements Callback {
 
   private final ScannerSettings settings;
   private RectF scanArea;
-  private RectF surfaceArea;
-
   public CameraOverlay(Context context, ScannerSettings settings) {
     super(context);
     this.settings = settings;
@@ -42,7 +39,6 @@ public class CameraOverlay extends SurfaceView implements Callback {
 
   @Override
   public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-    surfaceArea = new RectF(surfaceHolder.getSurfaceFrame());
     scanArea = calculateRectF(surfaceHolder.getSurfaceFrame().height(),
         surfaceHolder.getSurfaceFrame().width(),
         settings.getDetectorSize(), settings.getAspectRatioF());
@@ -53,14 +49,6 @@ public class CameraOverlay extends SurfaceView implements Callback {
     drawScanArea(canvas);
 
     surfaceHolder.unlockCanvasAndPost(canvas);
-  }
-
-  public RectF getScanArea() {
-    return scanArea;
-  }
-
-  public RectF getSurfaceArea() {
-    return surfaceArea;
   }
 
   @Override
@@ -131,31 +119,5 @@ public class CameraOverlay extends SurfaceView implements Callback {
         radius, Path.Direction.CCW);
     canvas.clipOutPath(path);
     canvas.drawColor(Color.parseColor(color));
-  }
-
-  public void drawDebugOverlay(ArrayList<String> detectedBarcodes) {
-    Canvas canvas = this.getHolder().lockCanvas();
-    if (canvas != null) {
-      canvas.drawColor(0, PorterDuff.Mode.CLEAR);
-
-      Paint paint = new Paint();
-      paint.setStyle(Paint.Style.STROKE);
-      paint.setStrokeWidth(5);
-
-      /*for (DetectedBarcode barcode : detectedBarcodes) {
-        RectF outline = barcode.getBoundingBox();
-        paint.setColor(Color.parseColor("#0000FF"));
-        canvas.drawRoundRect(outline, 0, 0, paint);
-
-        paint.setColor(Color.parseColor("#FF0000"));
-        RectF centerLine = barcode.getCenterLine();
-        canvas.drawLine(centerLine.left, centerLine.top, centerLine.right, centerLine.bottom,
-            paint);
-      }*/
-
-      drawScanArea(canvas);
-
-      getHolder().unlockCanvasAndPost(canvas);
-    }
   }
 }

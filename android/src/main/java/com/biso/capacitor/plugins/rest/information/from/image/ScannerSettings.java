@@ -2,7 +2,6 @@ package com.biso.capacitor.plugins.rest.information.from.image;
 
 import static com.biso.capacitor.plugins.rest.information.from.image.Utils.getAspectRatioFromString;
 import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.BEEP_ON_SUCCESS;
-import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.DEBUG_OVERLAY;
 import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.DETECTOR_ASPECT_RATIO;
 import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.DETECTOR_SIZE;
 import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.DRAW_FOCUS_BACKGROUND;
@@ -14,8 +13,6 @@ import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSett
 import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.FOCUS_RECT_BORDER_RADIUS;
 import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.FOCUS_RECT_BORDER_THICKNESS;
 import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.FOCUS_RECT_COLOR;
-import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.IGNORE_ROTATED_BARCODES;
-import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.STABLE_THRESHOLD;
 import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.VIBRATE_ON_SUCCESS;
 
 import android.os.Parcel;
@@ -42,9 +39,6 @@ public class ScannerSettings implements Parcelable {
   private String focusBackgroundColor = "#CCFFFFFF";
   private boolean beepOnSuccess = false;
   private boolean vibrateOnSuccess = false;
-  private int stableThreshold = 5;
-  private boolean debugOverlay = false;
-  private boolean ignoreRotatedBarcodes = false;
 
   public ScannerSettings(JSONObject settings) {
     Iterator<String> keys = settings.keys();
@@ -103,16 +97,6 @@ public class ScannerSettings implements Parcelable {
           case VIBRATE_ON_SUCCESS:
             vibrateOnSuccess = settings.optBoolean(VIBRATE_ON_SUCCESS.value(),
                 isVibrateOnSuccess());
-            break;
-          case STABLE_THRESHOLD:
-            stableThreshold = settings.optInt(STABLE_THRESHOLD.value(), getStableThreshold());
-            break;
-          case DEBUG_OVERLAY:
-            debugOverlay = settings.optBoolean(DEBUG_OVERLAY.value(), isDebugOverlay());
-            break;
-          case IGNORE_ROTATED_BARCODES:
-            ignoreRotatedBarcodes = settings.optBoolean(IGNORE_ROTATED_BARCODES.value(),
-                isIgnoreRotatedBarcodes());
             break;
           default:
             Log.e("SETTINGS", "No known setting for " + key);
@@ -180,18 +164,6 @@ public class ScannerSettings implements Parcelable {
     return vibrateOnSuccess;
   }
 
-  public int getStableThreshold() {
-    return stableThreshold;
-  }
-
-  public boolean isDebugOverlay() {
-    return debugOverlay;
-  }
-
-  public boolean isIgnoreRotatedBarcodes() {
-    return ignoreRotatedBarcodes;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -211,9 +183,6 @@ public class ScannerSettings implements Parcelable {
         && isDrawFocusBackground() == that.isDrawFocusBackground()
         && isBeepOnSuccess() == that.isBeepOnSuccess()
         && isVibrateOnSuccess() == that.isVibrateOnSuccess()
-        && getStableThreshold() == that.getStableThreshold()
-        && isDebugOverlay() == that.isDebugOverlay()
-        && isIgnoreRotatedBarcodes() == that.isIgnoreRotatedBarcodes()
         && getAspectRatio().equals(that.getAspectRatio()) && getFocusRectColor().equals(
         that.getFocusRectColor())
         && getFocusLineColor().equals(that.getFocusLineColor()) && getFocusBackgroundColor().equals(
@@ -229,7 +198,7 @@ public class ScannerSettings implements Parcelable {
         getFocusLineColor(), getFocusLineThickness(), isDrawFocusBackground(),
         getFocusBackgroundColor(),
         isBeepOnSuccess(),
-        isVibrateOnSuccess(), getStableThreshold(), isDebugOverlay(), isIgnoreRotatedBarcodes());
+        isVibrateOnSuccess());
   }
 
   @Override
@@ -253,9 +222,6 @@ public class ScannerSettings implements Parcelable {
     dest.writeString(this.getFocusBackgroundColor());
     dest.writeByte(this.isBeepOnSuccess() ? (byte) 1 : (byte) 0);
     dest.writeByte(this.isVibrateOnSuccess() ? (byte) 1 : (byte) 0);
-    dest.writeInt(this.getStableThreshold());
-    dest.writeByte(this.isDebugOverlay() ? (byte) 1 : (byte) 0);
-    dest.writeByte(this.isIgnoreRotatedBarcodes() ? (byte) 1 : (byte) 0);
   }
 
   public void readFromParcel(Parcel source) {
@@ -273,9 +239,6 @@ public class ScannerSettings implements Parcelable {
     this.focusBackgroundColor = source.readString();
     this.beepOnSuccess = source.readByte() != 0;
     this.vibrateOnSuccess = source.readByte() != 0;
-    this.stableThreshold = source.readInt();
-    this.debugOverlay = source.readByte() != 0;
-    this.ignoreRotatedBarcodes = source.readByte() != 0;
   }
 
   protected ScannerSettings(Parcel in) {
@@ -293,9 +256,6 @@ public class ScannerSettings implements Parcelable {
     this.focusBackgroundColor = in.readString();
     this.beepOnSuccess = in.readByte() != 0;
     this.vibrateOnSuccess = in.readByte() != 0;
-    this.stableThreshold = in.readInt();
-    this.debugOverlay = in.readByte() != 0;
-    this.ignoreRotatedBarcodes = in.readByte() != 0;
   }
 
   public static final Creator<ScannerSettings> CREATOR = new Creator<ScannerSettings>() {
@@ -326,10 +286,7 @@ public class ScannerSettings implements Parcelable {
     DRAW_FOCUS_BACKGROUND("drawFocusBackground"),
     FOCUS_BACKGROUND_COLOR("focusBackgroundColor"),
     BEEP_ON_SUCCESS("beepOnSuccess"),
-    VIBRATE_ON_SUCCESS("vibrateOnSuccess"),
-    STABLE_THRESHOLD("stableThreshold"),
-    DEBUG_OVERLAY("debugOverlay"),
-    IGNORE_ROTATED_BARCODES("ignoreRotatedBarcodes");
+    VIBRATE_ON_SUCCESS("vibrateOnSuccess");
 
     private final String option;
 

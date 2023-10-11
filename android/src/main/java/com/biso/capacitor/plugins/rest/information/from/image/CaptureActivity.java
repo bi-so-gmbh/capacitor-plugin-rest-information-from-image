@@ -13,7 +13,6 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Surface;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -23,7 +22,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.AspectRatio;
 import androidx.camera.core.Camera;
 import androidx.camera.core.CameraSelector;
-import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.Preview;
 import androidx.camera.core.Preview.SurfaceProvider;
@@ -37,8 +35,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class CaptureActivity extends AppCompatActivity {
 
@@ -106,7 +102,7 @@ public class CaptureActivity extends AppCompatActivity {
         readyToTakePicture = false;
         progressBar.setVisibility(View.VISIBLE);
         imageCapture.takePicture(executor,
-            new ImageCaptureListener(settings, request, this::finishWithSuccess, cameraOverlay));
+            new ImageCaptureListener(request, this::finishWithSuccess));
       }
     });
 

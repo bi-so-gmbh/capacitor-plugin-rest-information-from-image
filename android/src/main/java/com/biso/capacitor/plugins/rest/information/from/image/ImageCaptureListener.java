@@ -25,18 +25,13 @@ import org.json.JSONObject;
 
 public class ImageCaptureListener extends OnImageCapturedCallback {
 
-  private final CameraOverlay cameraOverlay;
   private final DataListener dataListener;
-  private final ScannerSettings settings;
   private final Request request;
 
-  public ImageCaptureListener(ScannerSettings settings, Request request, DataListener dataListener,
-      CameraOverlay cameraOverlay) {
+  public ImageCaptureListener(Request request, DataListener dataListener) {
     super();
-    this.settings = settings;
     this.request = request;
     this.dataListener = dataListener;
-    this.cameraOverlay = cameraOverlay;
   }
 
   @Override
@@ -52,11 +47,6 @@ public class ImageCaptureListener extends OnImageCapturedCallback {
     imageProxy.close();
 
     JSONObject result = doPOSTRequest(base64Image);
-    System.out.println(result);
-
-    if (settings.isDebugOverlay()) {
-      cameraOverlay.drawDebugOverlay(new ArrayList<>());
-    }
 
     Intent data = new Intent();
     data.putExtra("RESULT", result.toString());
