@@ -12,10 +12,17 @@
 		2F98D68224C9AAE500613A4C /* RestInformationPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F98D68124C9AAE400613A4C /* RestInformationPlugin.swift */; };
 		50ADFF92201F53D600D50D53 /* Plugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ADFF88201F53D600D50D53 /* Plugin.framework */; };
 		50ADFF97201F53D600D50D53 /* RestInformationPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ADFF96201F53D600D50D53 /* RestInformationPluginTests.swift */; };
-		50ADFF99201F53D600D50D53 /* RestInformationPluginPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 50ADFF8B201F53D600D50D53 /* RestInformationPluginPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50ADFFA42020D75100D50D53 /* Capacitor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ADFFA52020D75100D50D53 /* Capacitor.framework */; };
-		50ADFFA82020EE4F00D50D53 /* RestInformationPluginPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 50ADFFA72020EE4F00D50D53 /* RestInformationPluginPlugin.m */; };
-		50E1A94820377CB70090CE1A /* RestInformationPluginPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E1A94720377CB70090CE1A /* RestInformationPluginPlugin.swift */; };
+		DD3A78CB2AD6F358008FF58A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DD3A78CA2AD6F358008FF58A /* Assets.xcassets */; };
+		DD3A78D32AD6F375008FF58A /* ScannerSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3A78CC2AD6F375008FF58A /* ScannerSettings.swift */; };
+		DD3A78D42AD6F375008FF58A /* CameraOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3A78CD2AD6F375008FF58A /* CameraOverlay.swift */; };
+		DD3A78D52AD6F375008FF58A /* RestInformationPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = DD3A78CE2AD6F375008FF58A /* RestInformationPlugin.h */; };
+		DD3A78D62AD6F375008FF58A /* RestInformationPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = DD3A78CF2AD6F375008FF58A /* RestInformationPlugin.m */; };
+		DD3A78D82AD6F375008FF58A /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3A78D12AD6F375008FF58A /* CameraViewController.swift */; };
+		DD3A78D92AD6F375008FF58A /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3A78D22AD6F375008FF58A /* Utils.swift */; };
+		DD3A78DC2AD6F3ED008FF58A /* ImageCaptureListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3A78DA2AD6F3ED008FF58A /* ImageCaptureListener.swift */; };
+		DD3A78DD2AD6F3ED008FF58A /* HttpRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3A78DB2AD6F3ED008FF58A /* HttpRequest.swift */; };
+		DD3A78DF2AD6F44C008FF58A /* RestDataListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3A78DE2AD6F44C008FF58A /* RestDataListener.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,17 +39,24 @@
 		2F98D68124C9AAE400613A4C /* RestInformationPlugin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestInformationPlugin.swift; sourceTree = "<group>"; };
 		3B2A61DA5A1F2DD4F959604D /* Pods_Plugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Plugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		50ADFF88201F53D600D50D53 /* Plugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Plugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		50ADFF8B201F53D600D50D53 /* RestInformationPluginPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RestInformationPluginPlugin.h; sourceTree = "<group>"; };
 		50ADFF8C201F53D600D50D53 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		50ADFF91201F53D600D50D53 /* PluginTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PluginTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		50ADFF96201F53D600D50D53 /* RestInformationPluginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestInformationPluginTests.swift; sourceTree = "<group>"; };
 		50ADFF98201F53D600D50D53 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		50ADFFA52020D75100D50D53 /* Capacitor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Capacitor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		50ADFFA72020EE4F00D50D53 /* RestInformationPluginPlugin.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RestInformationPluginPlugin.m; sourceTree = "<group>"; };
-		50E1A94720377CB70090CE1A /* RestInformationPluginPlugin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestInformationPluginPlugin.swift; sourceTree = "<group>"; };
 		5E23F77F099397094342571A /* Pods-Plugin.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Plugin.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Plugin/Pods-Plugin.debug.xcconfig"; sourceTree = "<group>"; };
 		91781294A431A2A7CC6EB714 /* Pods-Plugin.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Plugin.release.xcconfig"; path = "Pods/Target Support Files/Pods-Plugin/Pods-Plugin.release.xcconfig"; sourceTree = "<group>"; };
 		96ED1B6440D6672E406C8D19 /* Pods-PluginTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PluginTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PluginTests/Pods-PluginTests.debug.xcconfig"; sourceTree = "<group>"; };
+		DD3A78CA2AD6F358008FF58A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		DD3A78CC2AD6F375008FF58A /* ScannerSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScannerSettings.swift; sourceTree = "<group>"; };
+		DD3A78CD2AD6F375008FF58A /* CameraOverlay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraOverlay.swift; sourceTree = "<group>"; };
+		DD3A78CE2AD6F375008FF58A /* RestInformationPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RestInformationPlugin.h; sourceTree = "<group>"; };
+		DD3A78CF2AD6F375008FF58A /* RestInformationPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RestInformationPlugin.m; sourceTree = "<group>"; };
+		DD3A78D12AD6F375008FF58A /* CameraViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
+		DD3A78D22AD6F375008FF58A /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		DD3A78DA2AD6F3ED008FF58A /* ImageCaptureListener.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCaptureListener.swift; sourceTree = "<group>"; };
+		DD3A78DB2AD6F3ED008FF58A /* HttpRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpRequest.swift; sourceTree = "<group>"; };
+		DD3A78DE2AD6F44C008FF58A /* RestDataListener.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RestDataListener.swift; sourceTree = "<group>"; };
 		F65BB2953ECE002E1EF3E424 /* Pods-PluginTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PluginTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PluginTests/Pods-PluginTests.release.xcconfig"; sourceTree = "<group>"; };
 		F6753A823D3815DB436415E3 /* Pods_PluginTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PluginTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -92,10 +106,17 @@
 		50ADFF8A201F53D600D50D53 /* Plugin */ = {
 			isa = PBXGroup;
 			children = (
-				50E1A94720377CB70090CE1A /* RestInformationPluginPlugin.swift */,
+				DD3A78CA2AD6F358008FF58A /* Assets.xcassets */,
+				DD3A78CD2AD6F375008FF58A /* CameraOverlay.swift */,
+				DD3A78D12AD6F375008FF58A /* CameraViewController.swift */,
+				DD3A78DB2AD6F3ED008FF58A /* HttpRequest.swift */,
+				DD3A78DE2AD6F44C008FF58A /* RestDataListener.swift */,
+				DD3A78DA2AD6F3ED008FF58A /* ImageCaptureListener.swift */,
+				DD3A78CE2AD6F375008FF58A /* RestInformationPlugin.h */,
+				DD3A78CF2AD6F375008FF58A /* RestInformationPlugin.m */,
+				DD3A78CC2AD6F375008FF58A /* ScannerSettings.swift */,
+				DD3A78D22AD6F375008FF58A /* Utils.swift */,
 				2F98D68124C9AAE400613A4C /* RestInformationPlugin.swift */,
-				50ADFF8B201F53D600D50D53 /* RestInformationPluginPlugin.h */,
-				50ADFFA72020EE4F00D50D53 /* RestInformationPluginPlugin.m */,
 				50ADFF8C201F53D600D50D53 /* Info.plist */,
 			);
 			path = Plugin;
@@ -138,7 +159,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				50ADFF99201F53D600D50D53 /* RestInformationPluginPlugin.h in Headers */,
+				DD3A78D52AD6F375008FF58A /* RestInformationPlugin.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -196,7 +217,7 @@
 				TargetAttributes = {
 					50ADFF87201F53D600D50D53 = {
 						CreatedOnToolsVersion = 9.2;
-						LastSwiftMigration = 1100;
+						LastSwiftMigration = 1430;
 						ProvisioningStyle = Automatic;
 					};
 					50ADFF90201F53D600D50D53 = {
@@ -230,6 +251,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD3A78CB2AD6F358008FF58A /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -306,9 +328,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				50E1A94820377CB70090CE1A /* RestInformationPluginPlugin.swift in Sources */,
 				2F98D68224C9AAE500613A4C /* RestInformationPlugin.swift in Sources */,
-				50ADFFA82020EE4F00D50D53 /* RestInformationPluginPlugin.m in Sources */,
+				DD3A78D82AD6F375008FF58A /* CameraViewController.swift in Sources */,
+				DD3A78D62AD6F375008FF58A /* RestInformationPlugin.m in Sources */,
+				DD3A78DF2AD6F44C008FF58A /* RestDataListener.swift in Sources */,
+				DD3A78D32AD6F375008FF58A /* ScannerSettings.swift in Sources */,
+				DD3A78D42AD6F375008FF58A /* CameraOverlay.swift in Sources */,
+				DD3A78DD2AD6F3ED008FF58A /* HttpRequest.swift in Sources */,
+				DD3A78D92AD6F375008FF58A /* Utils.swift in Sources */,
+				DD3A78DC2AD6F3ED008FF58A /* ImageCaptureListener.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
