@@ -15,6 +15,7 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -102,6 +103,7 @@ public class CaptureActivity extends AppCompatActivity {
 
     constraintLayout.setOnClickListener(v -> {
       if (readyToTakePicture) {
+        v.performHapticFeedback(MotionEvent.AXIS_TOUCH_MINOR);
         readyToTakePicture = false;
         progressBar.setIndeterminateTintList(
             ColorStateList.valueOf(Color.parseColor(settings.getLoadingCircleColor())));
@@ -120,6 +122,7 @@ public class CaptureActivity extends AppCompatActivity {
     torchButton.setOnClickListener(v -> {
       LiveData<Integer> flashState = camera.getCameraInfo().getTorchState();
       if (flashState.getValue() != null) {
+        v.performHapticFeedback(MotionEvent.AXIS_TOUCH_MINOR);
         boolean state = flashState.getValue() == 1;
         torchButton.setBackgroundResource(
             !state ? R.drawable.torch_active : R.drawable.torch_inactive);
