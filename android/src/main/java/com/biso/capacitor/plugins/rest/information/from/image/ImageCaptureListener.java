@@ -24,6 +24,10 @@ import org.json.JSONObject;
 
 public class ImageCaptureListener extends OnImageCapturedCallback {
 
+  private static final String LOG_KEY = "ImageCaptureListener";
+  public static final String STATUS = "status";
+  public static final String RESULT = "result";
+  public static final String ERROR = "error";
   private final RestDataListener restDataListener;
   private final HttpRequest httpRequest;
 
@@ -41,27 +45,43 @@ public class ImageCaptureListener extends OnImageCapturedCallback {
       imageProxy.close();
       return;
     }
-    String base64Image = ImageUtils.imageToBase64(image, imageProxy.getImageInfo().getRotationDegrees());
+    String base64Image = ImageUtils.imageToBase64(image,
+        imageProxy.getImageInfo().getRotationDegrees());
     image.close();
     imageProxy.close();
 
-    JSONObject result = doPOSTRequest(base64Image);
-
     Intent data = new Intent();
-    data.putExtra("RESULT", result.toString());
+    try {
+      JSONObject result = doPOSTRequest(base64Image);
+      data.putExtra(RESULT, result.toString());
+    } catch (JSONException e) {
+      // Shouldn't happen, exception is thrown on duplicate keys. Any important
+      // JSONExceptions are caught, only those for error handling can bubble up.
+    }
+
     restDataListener.onRestData(data);
   }
 
   @Override
   public void onError(@NonNull @NotNull ImageCaptureException exception) {
-    System.out.println("Image capture error");
+    Log.e(LOG_KEY, "ImageCaptureException: " + exception.getMessage());
+    JSONObject error = new JSONObject();
+    try {
+      error.put(ERROR, exception.getMessage());
+      Intent data = new Intent();
+      data.putExtra(RESULT, error.toString());
+      restDataListener.onRestData(data);
+    } catch (JSONException e) {
+      // Shouldn't happen, exception is thrown on duplicate keys and this is an empty object...
+    }
     super.onError(exception);
   }
 
-  private JSONObject doPOSTRequest(String base64Image) {
+  private JSONObject doPOSTRequest(String base64Image) throws JSONException {
     JSONObject result = new JSONObject();
     try {
-      HttpURLConnection httpURLConnection = (HttpURLConnection) httpRequest.getUrl().openConnection();
+      HttpURLConnection httpURLConnection = (HttpURLConnection) httpRequest.getUrl()
+          .openConnection();
 
       httpURLConnection.setRequestMethod("POST");
       httpURLConnection.setDoOutput(true);
@@ -81,31 +101,23 @@ public class ImageCaptureListener extends OnImageCapturedCallback {
       // read the response
       if (httpURLConnection.getResponseCode() == 200) {
         result = inputStreamToJson(httpURLConnection.getInputStream());
-        result.put("status", httpURLConnection.getResponseCode());
+        result.put(STATUS, httpURLConnection.getResponseCode());
       } else {
         result = inputStreamToJson(httpURLConnection.getErrorStream());
       }
       httpURLConnection.disconnect();
     } catch (IOException e) {
-      Log.e("ImageAnalyzer - POST Request", e.getMessage());
-      try {
-        result.put("error", e);
-      } catch (JSONException ex) {
-        throw new RuntimeException(ex);
-      }
+      Log.e(LOG_KEY, e.getMessage());
+      result.put(ERROR, e.getMessage());
     } catch (JSONException e) {
-      try {
-        result.put("error", "JSONException");
-      } catch (JSONException ex) {
-        throw new RuntimeException(ex);
-      }
+      result.put(ERROR, "JSONException");
     }
     return result;
   }
 
   private JSONObject inputStreamToJson(InputStream inputStream) throws IOException, JSONException {
     InputStream in = new BufferedInputStream(inputStream);
-    String responseBody = null;
+    String responseBody;
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
       responseBody = new String(in.readAllBytes(), StandardCharsets.UTF_8);
     } else {

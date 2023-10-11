@@ -2,6 +2,7 @@ package com.biso.capacitor.plugins.rest.information.from.image;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import com.getcapacitor.JSObject;
 import java.net.MalformedURLException;
@@ -11,6 +12,7 @@ import org.json.JSONObject;
 
 public class HttpRequest implements Parcelable {
 
+  private static final String LOG_KEY = "HttpRequest";
   private final URL url;
   private final JSONObject headers;
   private final JSONObject body;
@@ -63,6 +65,22 @@ public class HttpRequest implements Parcelable {
   }
 
   @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    HttpRequest that = (HttpRequest) o;
+    return that.getUrl().toString().equals(this.getUrl().toString())
+        && that.getBody().equals(this.getBody())
+        && that.getHeaders().equals(this.getHeaders())
+        && that.getBase64Key().equals(this.getBase64Key())
+        && that.getImageTypeKey().equals(this.getImageTypeKey());
+  }
+
+  @Override
   @NonNull
   public String toString() {
     return "(" + url.toString() + ", " + base64Key + ", " + imageTypeKey + ", " + headers.toString()
@@ -86,7 +104,8 @@ public class HttpRequest implements Parcelable {
       base64Key = in.readString();
       imageTypeKey = in.readString();
     } catch (MalformedURLException | JSONException e) {
-      throw new RuntimeException(e);
+      Log.e(LOG_KEY, "The impossible happened, a valid httpRequest object wasn't valid anymore after parceling");
+      throw new IllegalArgumentException("Unable to un-parcel");
     }
   }
 

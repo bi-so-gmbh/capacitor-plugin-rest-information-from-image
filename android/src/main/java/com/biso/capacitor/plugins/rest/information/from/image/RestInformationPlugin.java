@@ -1,5 +1,9 @@
 package com.biso.capacitor.plugins.rest.information.from.image;
 
+import static com.biso.capacitor.plugins.rest.information.from.image.ImageCaptureListener.ERROR;
+import static com.biso.capacitor.plugins.rest.information.from.image.ImageCaptureListener.RESULT;
+import static com.biso.capacitor.plugins.rest.information.from.image.ImageCaptureListener.STATUS;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
@@ -103,21 +107,22 @@ public class RestInformationPlugin extends Plugin {
       return;
     }
     Intent data = result.getData();
+    // finishWithSuccess used (ImageCaptureListener via RestDataListener)
     if (result.getResultCode() == CommonStatusCodes.SUCCESS) {
       if (data == null) {
         call.reject("CANCELED");
         return;
       }
-      JSObject scanResult = new JSObject(data.getStringExtra("RESULT"));
+      JSObject scanResult = new JSObject(data.getStringExtra(RESULT));
 
-      if (scanResult.has("status") && scanResult.getInt("status") == 200) {
+      if (scanResult.has(STATUS) && scanResult.getInt(STATUS) == 200) {
         call.resolve(scanResult);
       } else {
-        if (scanResult.has("error")) {
-          if (scanResult.has("status")) {
-            call.reject(scanResult.getString("error"), String.valueOf(scanResult.getInt("status")));
+        if (scanResult.has(ERROR)) {
+          if (scanResult.has(STATUS)) {
+            call.reject(scanResult.getString(ERROR), String.valueOf(scanResult.getInt(STATUS)));
           } else {
-            call.reject(scanResult.getString("error"));
+            call.reject(scanResult.getString(ERROR));
           }
         }
       }
@@ -132,10 +137,12 @@ public class RestInformationPlugin extends Plugin {
             VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE));
       }
       call.resolve(scanResult);
-    } else {
+    }
+    // finishWithError used
+    else {
       String err = "UNKNOWN_ERROR";
-      if (data != null) {
-        err = result.getData().getStringExtra("error");
+      if (data != null && (data.hasExtra(ERROR))) {
+          err = data.getStringExtra(ERROR);
       }
       call.reject(err);
     }
