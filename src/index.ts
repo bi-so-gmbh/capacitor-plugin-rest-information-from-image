@@ -1,13 +1,13 @@
 import { registerPlugin } from '@capacitor/core';
 
-import type { RestInformationPluginPlugin } from './definitions';
+import type { RestInformationPlugin } from './definitions';
 
-const RestInformationPlugin = registerPlugin<RestInformationPluginPlugin>(
-  'RestInformationPlugin',
+const RestInformation = registerPlugin<RestInformationPlugin>(
+  'RestInformation',
   {
-    web: () => import('./web').then(m => new m.RestInformationPluginWeb()),
+    web: () => import('./web').then(m => new m.RestInformationWeb()),
   },
 );
 
 export * from './definitions';
-export { RestInformationPlugin };
+export { RestInformation };

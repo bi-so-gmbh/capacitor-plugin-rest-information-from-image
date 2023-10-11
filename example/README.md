@@ -1,11 +1,13 @@
-## Created with Capacitor Create App
+## Rest Information from Image Test App
 
-This app was created using [`@capacitor/create-app`](https://github.com/ionic-team/create-capacitor-app),
-and comes with a very minimal shell for building an app.
+This is a test app for the capacitor plugin Rest 
+Information from Image. To use it, you need to copy or
+rename data_example.json to data.json and fill out the 
+information for your endpoint.
 
 ### Running this example
 
-To run the provided example, you can use `npm start` command.
+To run the test, you can use the `npm start` command for browser, though the plugin doesn't have browser support, so I would suggest building the app for mobile..
 
 ```bash
 npm start

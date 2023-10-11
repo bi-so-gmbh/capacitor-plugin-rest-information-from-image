@@ -1,6 +1,6 @@
 {
-  "appId": "com.example.plugin",
-  "appName": "example",
+  "appId": "com.biso.test.plugin.rest.information",
+  "appName": "Rest Information Scan Test App",
   "bundledWebRuntime": false,
   "webDir": "dist",
   "plugins": {

@@ -1,0 +1,9 @@
+{
+  "url": "your endpoint here",
+  "headers": {
+    "Content-type": "application/json; charset=UTF-8"
+  },
+  "body": {
+    "test": "add your body here"
+  }
+}

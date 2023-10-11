@@ -1,13 +1,13 @@
 import { WebPlugin } from '@capacitor/core';
 
-import type { RestInformationPluginPlugin } from './definitions';
+import type { RestInformationPlugin } from './definitions';
+import {IScanCall} from "./definitions";
 
-export class RestInformationPluginWeb
+export class RestInformationWeb
   extends WebPlugin
-  implements RestInformationPluginPlugin
+  implements RestInformationPlugin
 {
-  async echo(options: { value: string }): Promise<{ value: string }> {
-    console.log('ECHO', options);
-    return options;
+  async scan(_scanCall: IScanCall): Promise<{}> {
+    return Promise.reject(new Error("PLATFORM_NOT_SUPPORTED"));
   }
 }
