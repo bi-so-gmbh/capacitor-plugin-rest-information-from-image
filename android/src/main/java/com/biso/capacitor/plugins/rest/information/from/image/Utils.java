@@ -114,5 +114,4 @@ public class Utils {
   private Utils() {
     throw new IllegalStateException("Utility class");
   }
-
 }

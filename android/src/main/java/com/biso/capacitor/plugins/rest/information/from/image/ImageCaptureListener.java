@@ -16,7 +16,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
@@ -25,13 +24,13 @@ import org.json.JSONObject;
 
 public class ImageCaptureListener extends OnImageCapturedCallback {
 
-  private final DataListener dataListener;
-  private final Request request;
+  private final RestDataListener restDataListener;
+  private final HttpRequest httpRequest;
 
-  public ImageCaptureListener(Request request, DataListener dataListener) {
+  public ImageCaptureListener(HttpRequest httpRequest, RestDataListener restDataListener) {
     super();
-    this.request = request;
-    this.dataListener = dataListener;
+    this.httpRequest = httpRequest;
+    this.restDataListener = restDataListener;
   }
 
   @Override
@@ -50,7 +49,7 @@ public class ImageCaptureListener extends OnImageCapturedCallback {
 
     Intent data = new Intent();
     data.putExtra("RESULT", result.toString());
-    dataListener.onDataFound(data);
+    restDataListener.onRestData(data);
   }
 
   @Override
@@ -62,21 +61,21 @@ public class ImageCaptureListener extends OnImageCapturedCallback {
   private JSONObject doPOSTRequest(String base64Image) {
     JSONObject result = new JSONObject();
     try {
-      HttpURLConnection httpURLConnection = (HttpURLConnection) request.getUrl().openConnection();
+      HttpURLConnection httpURLConnection = (HttpURLConnection) httpRequest.getUrl().openConnection();
 
       httpURLConnection.setRequestMethod("POST");
       httpURLConnection.setDoOutput(true);
       httpURLConnection.setDoInput(true);
-      for (Iterator<String> it = request.getHeaders().keys(); it.hasNext(); ) {
+      for (Iterator<String> it = httpRequest.getHeaders().keys(); it.hasNext(); ) {
         String key = it.next();
-        httpURLConnection.setRequestProperty(key, request.getHeaders().getString(key));
+        httpURLConnection.setRequestProperty(key, httpRequest.getHeaders().getString(key));
       }
-      JSONObject body = request.getBody();
-      body.put(request.getBase64Key(), base64Image);
-      body.put(request.getImageTypeKey(), "jpeg");
+      JSONObject body = httpRequest.getBody();
+      body.put(httpRequest.getBase64Key(), base64Image);
+      body.put(httpRequest.getImageTypeKey(), "jpeg");
 
       OutputStream os = httpURLConnection.getOutputStream();
-      os.write(request.getBody().toString().getBytes(StandardCharsets.UTF_8));
+      os.write(httpRequest.getBody().toString().getBytes(StandardCharsets.UTF_8));
       os.close();
 
       // read the response

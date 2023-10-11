@@ -9,7 +9,7 @@ import java.net.URL;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Request implements Parcelable {
+public class HttpRequest implements Parcelable {
 
   private final URL url;
   private final JSONObject headers;
@@ -17,7 +17,7 @@ public class Request implements Parcelable {
   private final String base64Key;
   private final String imageTypeKey;
 
-  public Request(JSObject request) throws MalformedURLException {
+  public HttpRequest(JSObject request) throws MalformedURLException {
     url = new URL(request.getString("url"));
     body = request.getJSObject("body");
     headers = request.getJSObject("headers");
@@ -54,7 +54,7 @@ public class Request implements Parcelable {
   public int hashCode() {
     int result = 1;
     int prime = 13;
-    result += prime * url.hashCode();
+    result += prime * url.toString().hashCode();
     result += prime * headers.hashCode();
     result += prime * body.hashCode();
     result += prime * base64Key.hashCode();
@@ -78,7 +78,7 @@ public class Request implements Parcelable {
     dest.writeString(imageTypeKey);
   }
 
-  protected Request(Parcel in) {
+  protected HttpRequest(Parcel in) {
     try {
       headers = new JSONObject(in.readString());
       url = new URL(in.readString());
@@ -90,15 +90,15 @@ public class Request implements Parcelable {
     }
   }
 
-  public static final Creator<Request> CREATOR = new Creator<>() {
+  public static final Creator<HttpRequest> CREATOR = new Creator<>() {
     @Override
-    public Request createFromParcel(Parcel source) {
-      return new Request(source);
+    public HttpRequest createFromParcel(Parcel source) {
+      return new HttpRequest(source);
     }
 
     @Override
-    public Request[] newArray(int size) {
-      return new Request[size];
+    public HttpRequest[] newArray(int size) {
+      return new HttpRequest[size];
     }
   };
 }

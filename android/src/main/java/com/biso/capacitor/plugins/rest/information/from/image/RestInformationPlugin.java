@@ -30,8 +30,9 @@ public class RestInformationPlugin extends Plugin {
 
   public static final String SETTINGS = "settings";
   public static final String REQUEST = "request";
+  public static final String LOG_TAG = "RestInformationPlugin";
   private ScannerSettings scannerSettings;
-  private Request request;
+  private HttpRequest httpRequest;
   private MediaPlayer mediaPlayer;
   private Vibrator vibrator;
   Context context;
@@ -61,7 +62,7 @@ public class RestInformationPlugin extends Plugin {
           descriptor.getLength());
       mediaPlayer.prepare();
     } catch (IOException e) {
-      Log.e("MLKitBarcodeScanner", "Something went wrong trying to play 'beep.mp3'");
+      Log.e(LOG_TAG, "Something went wrong trying to play 'beep.mp3'");
     }
   }
 
@@ -70,25 +71,29 @@ public class RestInformationPlugin extends Plugin {
     Intent intent = new Intent(context, CaptureActivity.class);
 
     JSObject scanCall = call.getData();
-    if (Objects.isNull(scanCall)) {
-      scanCall = new JSObject();
+    if (Objects.isNull(scanCall) || !scanCall.has(REQUEST)) {
+      call.reject("REQUIRED_DATA_MISSING");
     }
-    JSObject scanSettings = new JSObject();
-    JSObject scanRequest = new JSObject();
-    try {
-      scanSettings = scanCall.getJSObject(SETTINGS, new JSObject());
-      scanRequest = scanCall.getJSObject(REQUEST, new JSObject());
-    } catch (JSONException e) {
-      Log.e("RestInformationPlugin", "something is wrong with the call, check the parameters");
+
+    JSObject scanSettings = scanCall.getJSObject(SETTINGS);
+    if (scanSettings == null) {
+      scanSettings = new JSObject();
     }
     scannerSettings = new ScannerSettings(scanSettings);
+
     try {
-      request = new Request(scanRequest);
+      JSObject scanRequest = scanCall.getJSObject(REQUEST);
+      if (scanRequest != null && scanRequest.length() > 0) {
+        httpRequest = new HttpRequest(scanRequest);
+      } else {
+        call.reject("REQUEST_INVALID");
+      }
     } catch (MalformedURLException e) {
+      Log.e(LOG_TAG, e.getMessage());
       call.reject("INVALID_URL");
     }
     intent.putExtra(SETTINGS, scannerSettings);
-    intent.putExtra(REQUEST, request);
+    intent.putExtra(REQUEST, httpRequest);
     startActivityForResult(call, intent, "onScanResult");
   }
 
@@ -104,9 +109,8 @@ public class RestInformationPlugin extends Plugin {
         return;
       }
       JSObject scanResult = new JSObject(data.getStringExtra("RESULT"));
-      System.out.println(scanResult);
+
       if (scanResult.has("status") && scanResult.getInt("status") == 200) {
-        System.out.println("done, back to js");
         call.resolve(scanResult);
       } else {
         if (scanResult.has("error")) {

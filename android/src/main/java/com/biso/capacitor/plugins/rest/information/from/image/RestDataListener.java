@@ -2,7 +2,7 @@ package com.biso.capacitor.plugins.rest.information.from.image;
 
 import android.content.Intent;
 
-public interface DataListener {
+public interface RestDataListener {
 
-  void onDataFound(Intent data);
+  void onRestData(Intent data);
 }

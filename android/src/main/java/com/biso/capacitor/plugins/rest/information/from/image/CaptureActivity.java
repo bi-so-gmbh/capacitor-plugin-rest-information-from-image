@@ -40,9 +40,7 @@ public class CaptureActivity extends AppCompatActivity {
 
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
   private Camera camera;
-  private ScannerSettings settings;
-  private Request request;
-  private CameraOverlay cameraOverlay;
+
   private ImageCapture imageCapture;
   private boolean readyToTakePicture = true;
 
@@ -69,6 +67,7 @@ public class CaptureActivity extends AppCompatActivity {
       finishWithError("NO_CAMERA");
     }
 
+    ScannerSettings settings;
     if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
       settings = getIntent().getParcelableExtra(SETTINGS, ScannerSettings.class);
     } else {
@@ -76,15 +75,16 @@ public class CaptureActivity extends AppCompatActivity {
       settings = getIntent().getParcelableExtra(SETTINGS); // NOSONAR
     }
 
+    HttpRequest httpRequest;
     if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
-      request = getIntent().getParcelableExtra(REQUEST, Request.class);
+      httpRequest = getIntent().getParcelableExtra(REQUEST, HttpRequest.class);
     } else {
       // noinspection deprecation
-      request = getIntent().getParcelableExtra(REQUEST); // NOSONAR
+      httpRequest = getIntent().getParcelableExtra(REQUEST); // NOSONAR
     }
 
     setContentView(R.layout.capture_activity);
-    cameraOverlay = new CameraOverlay(this, settings);
+    CameraOverlay cameraOverlay = new CameraOverlay(this, settings);
 
     ConstraintLayout constraintLayout = findViewById(R.id.topLayout);
     constraintLayout.addView(cameraOverlay);
@@ -102,7 +102,7 @@ public class CaptureActivity extends AppCompatActivity {
         readyToTakePicture = false;
         progressBar.setVisibility(View.VISIBLE);
         imageCapture.takePicture(executor,
-            new ImageCaptureListener(request, this::finishWithSuccess));
+            new ImageCaptureListener(httpRequest, this::finishWithSuccess));
       }
     });
 
@@ -117,8 +117,6 @@ public class CaptureActivity extends AppCompatActivity {
       }
     });
   }
-
-  
 
   private void finishWithError(String errorMessage) {
     Intent result = new Intent();

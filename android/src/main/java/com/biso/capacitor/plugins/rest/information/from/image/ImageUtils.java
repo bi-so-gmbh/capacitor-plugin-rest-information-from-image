@@ -12,7 +12,7 @@ import android.graphics.Matrix;
 
 public class ImageUtils {
 
-  public static Bitmap rgba_8888ToBitmap(Image image) {
+  public static Bitmap rgba8888ToBitmap(Image image) {
     Image.Plane[] planes = image.getPlanes();
     ByteBuffer buffer = planes[0].getBuffer();
     int pixelStride = planes[0].getPixelStride();
@@ -35,14 +35,13 @@ public class ImageUtils {
   }
 
   public static String imageToBase64(Image image, int rotation) {
-    System.out.println("imageFormat: " + image.getFormat() + ", rotation: " + rotation);
     Bitmap bitmap;
     switch (image.getFormat()) {
       case ImageFormat.JPEG:
         bitmap = rotateBitmap(jpegToBitmap(image), rotation);
         break;
       case 1:
-        bitmap = rotateBitmap(rgba_8888ToBitmap(image), rotation);
+        bitmap = rotateBitmap(rgba8888ToBitmap(image), rotation);
         break;
       default:
         throw new IllegalStateException("Image format " + image.getFormat() + " not supported");
@@ -58,5 +57,9 @@ public class ImageUtils {
     Matrix mat = new Matrix();
     mat.postRotate(degrees);
     return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), mat, true);
+  }
+
+  private ImageUtils() {
+    throw new IllegalStateException("Utility class");
   }
 }

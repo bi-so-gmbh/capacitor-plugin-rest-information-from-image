@@ -19,6 +19,7 @@ public class CameraOverlay extends SurfaceView implements Callback {
 
   private final ScannerSettings settings;
   private RectF scanArea;
+
   public CameraOverlay(Context context, ScannerSettings settings) {
     super(context);
     this.settings = settings;
