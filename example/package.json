@@ -14,10 +14,8 @@
   },
   "dependencies": {
     "@capacitor/android": "^5.0.0",
-    "@capacitor/camera": "latest",
     "@capacitor/core": "latest",
     "@capacitor/ios": "^5.0.0",
-    "@capacitor/splash-screen": "latest",
     "capacitor-plugin-rest-information-from-image": "file:.."
   },
   "devDependencies": {
