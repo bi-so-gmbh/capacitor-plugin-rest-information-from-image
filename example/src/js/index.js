@@ -44,7 +44,7 @@ init();
 function onSuccess(result) {
   const node = document.createElement('div');
   node.className = 'log_item'
-  node.textContent = `${result.serialNumber}`;
+  node.textContent = `${JSON.stringify(result, undefined, 2)}`;
   document.getElementById('output').prepend(node);
 }
 
