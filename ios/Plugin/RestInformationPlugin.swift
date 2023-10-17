@@ -16,13 +16,10 @@ public class RestInformationPlugin: CAPPlugin, CameraViewControllerDelegate {
     @objc func scan(_ call: CAPPluginCall) {
         // TODO: get settings and request
         let options = call.jsObjectRepresentation
-        print(options)
         self.call = call
         
         settings = ScannerSettings(options: options["settings"] as! [String : Any])
         httpRequest = HttpRequest(request: options["request"] as! [String:Any])
-        
-        print(httpRequest!)
         
         DispatchQueue.main.async {
             let cameraViewController = CameraViewController(settings: self.settings, request: self.httpRequest)
@@ -41,9 +38,10 @@ public class RestInformationPlugin: CAPPlugin, CameraViewControllerDelegate {
             self.bridge!.viewController!.dismiss(animated: true)
         }
         if (result.isEmpty) {
-            self.call!.reject("NO_BARCODE")
+            self.call!.reject("EMPTY")
             return
         }
+        
         if (settings.vibrateOnSuccess) {
             AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(kSystemSoundID_Vibrate)) { }
         }
@@ -63,15 +61,20 @@ public class RestInformationPlugin: CAPPlugin, CameraViewControllerDelegate {
                 }
             }
         }
-        var output = JSObject()
-        //output.updateValue(resultBarcodes, forKey: "barcodes")
-        self.call!.resolve(output)
+        
+        if (result.keys.contains("status") && result["status"] as! Int == 200) {
+            self.call!.resolve(result)
+        } else {
+            if(result.keys.contains("status")) {
+                self.call!.reject(result["error"] as! String, result["status"] as? String)
+            } else {
+                self.call!.reject(result["error"] as! String)
+            }
+        }
     }
     
     func onError(_ error: String) {
-        print("error occurred")
         self.bridge!.viewController!.dismiss(animated: false)
-        print("controller dismissed")
         self.call!.reject(error)
     }
 }

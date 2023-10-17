@@ -15,7 +15,7 @@ class HttpRequest: CustomDebugStringConvertible {
     public private(set) var headers: [String:String]
     public private(set) var body: [String:Any]
     public private(set) var base64Key: String = "fileBase64"
-    public private(set) var imageTypeKey: String = "imageTypeKey"
+    public private(set) var imageTypeKey: String = "imageType"
     
     init(request:[String:Any]) {
         url = URL(string: request["url"] as! String)!

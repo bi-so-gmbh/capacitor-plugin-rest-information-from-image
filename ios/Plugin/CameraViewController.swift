@@ -18,7 +18,8 @@ class CameraViewController: UIViewController, RestDataListener {
     private var cameraOverlay: CameraOverlay!
     private var torchButton: UIButton?
     private var finishedAlready: Bool = false // ensure we only actually finish once
-    let stillImageOutput = AVCapturePhotoOutput()
+    private var spinner: UIActivityIndicatorView?
+    private let stillImageOutput = AVCapturePhotoOutput()
     
     func onRestData(_ data: [String: Any]) {
         finishWithResult(data)
@@ -131,15 +132,24 @@ class CameraViewController: UIViewController, RestDataListener {
         torchButton = createTorchButton()
         let gesture = UITapGestureRecognizer(target: self, action:  #selector (self.onTouch (_:)))
         view.addGestureRecognizer(gesture)
+        
+        spinner = UIActivityIndicatorView(style: .large)
+        spinner!.translatesAutoresizingMaskIntoConstraints = false
+        spinner!.startAnimating()
+        spinner!.isHidden = true
+        spinner!.color = settings.loadingCircleUIColor
+        view.addSubview(spinner!)
+        
+        spinner!.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        spinner!.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
     }
     
     @objc func onTouch(_ sender:UITapGestureRecognizer){
-        print("Touch!")
+        spinner!.isHidden = false
         let photoSettings : AVCapturePhotoSettings = AVCapturePhotoSettings(format: [AVVideoCodecKey:AVVideoCodecType.jpeg])
 
-        captureDelegate = ImageCaptureListener(httpRequest: httpRequest)
+        captureDelegate = ImageCaptureListener(httpRequest: httpRequest, restDataListener: self)
         self.stillImageOutput.capturePhoto(with: photoSettings, delegate: captureDelegate!)
-        print("end touch")
     }
     
     private func createTorchButton() -> UIButton? {
