@@ -53,7 +53,6 @@ class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
             guard let httpResponse = response as? HTTPURLResponse,
                   (200...299).contains(httpResponse.statusCode)
             else {
-                print("Invalid Response received from the server")
                 return responseToJson(data: data)
             }
             result = responseToJson(data: data)
