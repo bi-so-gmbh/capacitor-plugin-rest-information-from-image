@@ -88,6 +88,7 @@ public class ImageCaptureListener extends OnImageCapturedCallback {
         httpURLConnection.setRequestProperty(key, httpRequest.getHeaders().getString(key));
       }
       JSONObject body = httpRequest.getBody();
+      System.out.println(body.toString());
       body.put(httpRequest.getBase64Key(), base64Image);
       body.put(httpRequest.getImageTypeKey(), "jpeg");
 
@@ -98,7 +99,9 @@ public class ImageCaptureListener extends OnImageCapturedCallback {
       // read the response
       if (httpURLConnection.getResponseCode() == 200) {
         result = inputStreamToJson(httpURLConnection.getInputStream());
-        result.put(Keys.STATUS, httpURLConnection.getResponseCode());
+        if (!result.has(Keys.ERROR)) {
+          result.put(Keys.STATUS, httpURLConnection.getResponseCode());
+        }
       } else {
         result = inputStreamToJson(httpURLConnection.getErrorStream());
       }
@@ -117,13 +120,17 @@ public class ImageCaptureListener extends OnImageCapturedCallback {
   }
 
   private JSONObject inputStreamToJson(InputStream inputStream) throws IOException, JSONException {
-    if (inputStream == null || inputStream.available() == 0) {
+    if (inputStream == null) {
       return new JSONObject("{" + Keys.ERROR + ":" + ErrorMessages.EMPTY_RESPONSE + "}");
     }
     InputStream in = new BufferedInputStream(inputStream);
     String responseBody;
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-      responseBody = new String(in.readAllBytes(), StandardCharsets.UTF_8);
+      byte[] bytes = in.readAllBytes();
+      if (bytes.length == 0) {
+        return new JSONObject("{" + Keys.ERROR + ":" + ErrorMessages.EMPTY_RESPONSE + "}");
+      }
+      responseBody = new String(bytes, StandardCharsets.UTF_8);
     } else {
       responseBody = new BufferedReader(
           new InputStreamReader(in, StandardCharsets.UTF_8))
