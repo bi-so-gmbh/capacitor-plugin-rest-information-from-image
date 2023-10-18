@@ -142,4 +142,67 @@ class Utils {
         }
         return deviceOrientation()
     }
+    /**
+     * Rotates an image into the given orientation
+     *
+     * @param image UIImage to rotate
+     * @param orientation the target totation
+     * @return the rotated image
+     */
+    public static func rotateImage(image: UIImage, orientation: UIImage.Orientation) -> UIImage? {
+        if orientation == .up {
+            return image
+        }
+        
+        var transform = CGAffineTransform.identity
+        
+        // rotate image
+        switch orientation {
+        case .down, .downMirrored:
+            transform = transform.translatedBy(x: image.size.height, y: image.size.width)
+            transform = transform.rotated(by: CGFloat(Double.pi))
+        case .left, .leftMirrored:
+            transform = transform.translatedBy(x: image.size.width, y: 0)
+            transform = transform.rotated(by:  CGFloat(Double.pi / 2))
+        case .right, .rightMirrored:
+            transform = transform.translatedBy(x: 0, y: image.size.height)
+            transform = transform.rotated(by:  -CGFloat(Double.pi / 2))
+        default:
+            break
+        }
+        
+        // fix mirrored image
+        switch orientation {
+        case .upMirrored, .downMirrored:
+            transform = transform.translatedBy(x: image.size.width, y: 0)
+            transform = transform.scaledBy(x: -1, y: 1)
+        case .leftMirrored, .rightMirrored:
+            transform = transform.translatedBy(x: image.size.height, y: 0)
+            transform = transform.scaledBy(x: -1, y: 1)
+        default:
+            break
+        }
+
+        // Now we draw the underlying CGImage into a new context, applying the transform
+        // calculated above.
+        guard let context = CGContext(data: nil, width: Int(image.size.width), height: Int(image.size.height), bitsPerComponent: image.cgImage!.bitsPerComponent, bytesPerRow: 0, space: image.cgImage!.colorSpace!, bitmapInfo: image.cgImage!.bitmapInfo.rawValue) else {
+            return nil
+        }
+        
+        context.concatenate(transform)
+        
+        switch orientation {
+        case .left, .leftMirrored, .right, .rightMirrored:
+            context.draw(image.cgImage!, in: CGRect(x: 0, y: 0, width: image.size.height, height: image.size.width))
+        default:
+            context.draw(image.cgImage!, in: CGRect(origin: .zero, size: image.size))
+        }
+        
+        // And now we just create a new UIImage from the drawing context
+        guard let CGImage = context.makeImage() else {
+            return nil
+        }
+        
+        return UIImage(cgImage: CGImage)
+    }
 }

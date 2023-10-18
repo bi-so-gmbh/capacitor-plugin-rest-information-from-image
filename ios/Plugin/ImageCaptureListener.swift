@@ -17,15 +17,15 @@ class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
             return
         }
         guard let imageData = photo.fileDataRepresentation() else { return }
-        
-        
-        let image = UIImage(data: imageData)
-        let base64 = image?.jpegData(compressionQuality: 0.75)?.base64EncodedString() ?? "error"
-        
-        Task.init {
-            let result = await doPOSTRequest(base64Image: base64)
-            self.restDataListener.onRestData(result)
-        }
+            
+            var image = UIImage(data: imageData)
+            image = Utils.rotateImage(image: image!, orientation: Utils.imageOrientation(fromDevicePosition: .back))
+            let base64 = image!.jpegData(compressionQuality: 0.75)?.base64EncodedString() ?? "error"
+            
+            Task.init {
+                let result = await doPOSTRequest(base64Image: base64)
+                self.restDataListener.onRestData(result)
+            }
     }
     
     private func doPOSTRequest(base64Image:String) async -> [String:Any] {
