@@ -105,7 +105,11 @@ public class ImageCaptureListener extends OnImageCapturedCallback {
       httpURLConnection.disconnect();
     } catch (IOException e) {
       Log.e(LOG_KEY, e.getMessage());
-      result.put(Keys.ERROR, ErrorMessages.JSON_ERROR);
+      if (e.getMessage().startsWith("Failed to connect to")) {
+        result.put(Keys.ERROR, ErrorMessages.CONNECTION_ERROR);
+      } else {
+        result.put(Keys.ERROR, e.getMessage());
+      }
     } catch (JSONException e) {
       result.put(Keys.ERROR, ErrorMessages.JSON_ERROR);
     }

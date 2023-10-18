@@ -11,6 +11,7 @@ public final class ErrorMessages {
   public static final String  REQUIRED_DATA_MISSING = "REQUIRED_DATA_MISSING";
   public static final String  REQUEST_INVALID = "REQUEST_INVALID";
   public static final String  INVALID_URL = "INVALID_URL";
+  public static final String  CONNECTION_ERROR = "CONNECTION_ERROR";
 
   private ErrorMessages() {
     throw new IllegalStateException("Utility class");
