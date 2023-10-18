@@ -107,9 +107,26 @@ public class RestInformationPlugin extends Plugin {
         return;
       }
       JSObject scanResult = new JSObject(data.getStringExtra(Keys.RESULT));
+      if (scanResult.length() == 0) {
+        call.reject(ErrorMessages.EMPTY_RESPONSE);
+        return;
+      }
+
+      if(!scanResult.has(Keys.ERROR)) {
+        if (scannerSettings.isBeepOnSuccess()) {
+          mediaPlayer.start();
+        }
+
+        if (scannerSettings.isVibrateOnSuccess()) {
+          int duration = 200;
+          vibrator.vibrate(
+              VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE));
+        }
+      }
 
       if (scanResult.has(Keys.STATUS) && scanResult.getInt(Keys.STATUS) == 200) {
         call.resolve(scanResult);
+        return;
       } else {
         if (scanResult.has(Keys.ERROR)) {
           if (scanResult.has(Keys.STATUS)) {
@@ -117,19 +134,9 @@ public class RestInformationPlugin extends Plugin {
           } else {
             call.reject(scanResult.getString(Keys.ERROR));
           }
+          return;
         }
       }
-
-      if (scannerSettings.isBeepOnSuccess()) {
-        mediaPlayer.start();
-      }
-
-      if (scannerSettings.isVibrateOnSuccess()) {
-        int duration = 200;
-        vibrator.vibrate(
-            VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE));
-      }
-      call.resolve(scanResult);
     }
     // finishWithError used
     else {
