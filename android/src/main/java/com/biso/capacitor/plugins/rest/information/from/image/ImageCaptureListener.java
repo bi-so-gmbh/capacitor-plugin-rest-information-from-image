@@ -25,9 +25,6 @@ import org.json.JSONObject;
 public class ImageCaptureListener extends OnImageCapturedCallback {
 
   private static final String LOG_KEY = "ImageCaptureListener";
-  public static final String STATUS = "status";
-  public static final String RESULT = "result";
-  public static final String ERROR = "error";
   private final RestDataListener restDataListener;
   private final HttpRequest httpRequest;
 
@@ -53,7 +50,7 @@ public class ImageCaptureListener extends OnImageCapturedCallback {
     Intent data = new Intent();
     try {
       JSONObject result = doPOSTRequest(base64Image);
-      data.putExtra(RESULT, result.toString());
+      data.putExtra(Keys.RESULT, result.toString());
     } catch (JSONException e) {
       // Shouldn't happen, exception is thrown on duplicate keys. Any important
       // JSONExceptions are caught, only those for error handling can bubble up.
@@ -67,9 +64,9 @@ public class ImageCaptureListener extends OnImageCapturedCallback {
     Log.e(LOG_KEY, "ImageCaptureException: " + exception.getMessage());
     JSONObject error = new JSONObject();
     try {
-      error.put(ERROR, exception.getMessage());
+      error.put(Keys.ERROR, ErrorMessages.CAMERA_ERROR);
       Intent data = new Intent();
-      data.putExtra(RESULT, error.toString());
+      data.putExtra(Keys.RESULT, error.toString());
       restDataListener.onRestData(data);
     } catch (JSONException e) {
       // Shouldn't happen, exception is thrown on duplicate keys and this is an empty object...
@@ -101,21 +98,24 @@ public class ImageCaptureListener extends OnImageCapturedCallback {
       // read the response
       if (httpURLConnection.getResponseCode() == 200) {
         result = inputStreamToJson(httpURLConnection.getInputStream());
-        result.put(STATUS, httpURLConnection.getResponseCode());
+        result.put(Keys.STATUS, httpURLConnection.getResponseCode());
       } else {
         result = inputStreamToJson(httpURLConnection.getErrorStream());
       }
       httpURLConnection.disconnect();
     } catch (IOException e) {
       Log.e(LOG_KEY, e.getMessage());
-      result.put(ERROR, e.getMessage());
+      result.put(Keys.ERROR, ErrorMessages.JSON_ERROR);
     } catch (JSONException e) {
-      result.put(ERROR, "JSONException");
+      result.put(Keys.ERROR, ErrorMessages.JSON_ERROR);
     }
     return result;
   }
 
   private JSONObject inputStreamToJson(InputStream inputStream) throws IOException, JSONException {
+    if (inputStream == null || inputStream.available() == 0) {
+      return new JSONObject("{" + Keys.ERROR + ":" + ErrorMessages.EMPTY_RESPONSE + "}");
+    }
     InputStream in = new BufferedInputStream(inputStream);
     String responseBody;
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {

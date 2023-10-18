@@ -1,9 +1,5 @@
 package com.biso.capacitor.plugins.rest.information.from.image;
 
-import static com.biso.capacitor.plugins.rest.information.from.image.ImageCaptureListener.ERROR;
-import static com.biso.capacitor.plugins.rest.information.from.image.ImageCaptureListener.RESULT;
-import static com.biso.capacitor.plugins.rest.information.from.image.ImageCaptureListener.STATUS;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
@@ -31,9 +27,6 @@ import org.json.JSONException;
 
 @CapacitorPlugin(name = "RestInformation")
 public class RestInformationPlugin extends Plugin {
-
-  public static final String SETTINGS = "settings";
-  public static final String REQUEST = "request";
   public static final String LOG_TAG = "RestInformationPlugin";
   private ScannerSettings scannerSettings;
   private HttpRequest httpRequest;
@@ -75,29 +68,29 @@ public class RestInformationPlugin extends Plugin {
     Intent intent = new Intent(context, CaptureActivity.class);
 
     JSObject scanCall = call.getData();
-    if (Objects.isNull(scanCall) || !scanCall.has(REQUEST)) {
-      call.reject("REQUIRED_DATA_MISSING");
+    if (Objects.isNull(scanCall) || !scanCall.has(Keys.REQUEST)) {
+      call.reject(ErrorMessages.REQUIRED_DATA_MISSING);
     }
 
-    JSObject scanSettings = scanCall.getJSObject(SETTINGS);
+    JSObject scanSettings = scanCall.getJSObject(Keys.SETTINGS);
     if (scanSettings == null) {
       scanSettings = new JSObject();
     }
     scannerSettings = new ScannerSettings(scanSettings);
 
     try {
-      JSObject scanRequest = scanCall.getJSObject(REQUEST);
+      JSObject scanRequest = scanCall.getJSObject(Keys.REQUEST);
       if (scanRequest != null && scanRequest.length() > 0) {
         httpRequest = new HttpRequest(scanRequest);
       } else {
-        call.reject("REQUEST_INVALID");
+        call.reject(ErrorMessages.REQUEST_INVALID);
       }
     } catch (MalformedURLException e) {
       Log.e(LOG_TAG, e.getMessage());
-      call.reject("INVALID_URL");
+      call.reject(ErrorMessages.INVALID_URL);
     }
-    intent.putExtra(SETTINGS, scannerSettings);
-    intent.putExtra(REQUEST, httpRequest);
+    intent.putExtra(Keys.SETTINGS, scannerSettings);
+    intent.putExtra(Keys.REQUEST, httpRequest);
     startActivityForResult(call, intent, "onScanResult");
   }
 
@@ -110,19 +103,19 @@ public class RestInformationPlugin extends Plugin {
     // finishWithSuccess used (ImageCaptureListener via RestDataListener)
     if (result.getResultCode() == CommonStatusCodes.SUCCESS) {
       if (data == null) {
-        call.reject("CANCELED");
+        call.reject(ErrorMessages.CANCELLED);
         return;
       }
-      JSObject scanResult = new JSObject(data.getStringExtra(RESULT));
+      JSObject scanResult = new JSObject(data.getStringExtra(Keys.RESULT));
 
-      if (scanResult.has(STATUS) && scanResult.getInt(STATUS) == 200) {
+      if (scanResult.has(Keys.STATUS) && scanResult.getInt(Keys.STATUS) == 200) {
         call.resolve(scanResult);
       } else {
-        if (scanResult.has(ERROR)) {
-          if (scanResult.has(STATUS)) {
-            call.reject(scanResult.getString(ERROR), String.valueOf(scanResult.getInt(STATUS)));
+        if (scanResult.has(Keys.ERROR)) {
+          if (scanResult.has(Keys.STATUS)) {
+            call.reject(scanResult.getString(Keys.ERROR), String.valueOf(scanResult.getInt(Keys.STATUS)));
           } else {
-            call.reject(scanResult.getString(ERROR));
+            call.reject(scanResult.getString(Keys.ERROR));
           }
         }
       }
@@ -140,9 +133,9 @@ public class RestInformationPlugin extends Plugin {
     }
     // finishWithError used
     else {
-      String err = "UNKNOWN_ERROR";
-      if (data != null && (data.hasExtra(ERROR))) {
-          err = data.getStringExtra(ERROR);
+      String err = ErrorMessages.UNKNOWN_ERROR;
+      if (data != null && (data.hasExtra(Keys.ERROR))) {
+          err = data.getStringExtra(Keys.ERROR);
       }
       call.reject(err);
     }

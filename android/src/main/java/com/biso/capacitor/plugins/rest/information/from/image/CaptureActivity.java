@@ -1,8 +1,5 @@
 package com.biso.capacitor.plugins.rest.information.from.image;
 
-import static com.biso.capacitor.plugins.rest.information.from.image.RestInformationPlugin.REQUEST;
-import static com.biso.capacitor.plugins.rest.information.from.image.RestInformationPlugin.SETTINGS;
-
 import android.Manifest.permission;
 import android.content.Context;
 import android.content.Intent;
@@ -53,7 +50,7 @@ public class CaptureActivity extends AppCompatActivity {
         if (Boolean.TRUE.equals(isGranted)) {
           startCamera();
         } else {
-          finishWithError("NO_CAMERA_PERMISSION");
+          finishWithError(ErrorMessages.NO_CAMERA_PERMISSION);
         }
       });
 
@@ -65,26 +62,26 @@ public class CaptureActivity extends AppCompatActivity {
     try {
       if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
           || cameraManager.getCameraIdList().length == 0) {
-        finishWithError("NO_CAMERA");
+        finishWithError(ErrorMessages.NO_CAMERA);
       }
     } catch (CameraAccessException e) {
-      finishWithError("NO_CAMERA");
+      finishWithError(ErrorMessages.NO_CAMERA);
     }
 
     ScannerSettings settings;
     if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
-      settings = getIntent().getParcelableExtra(SETTINGS, ScannerSettings.class);
+      settings = getIntent().getParcelableExtra(Keys.SETTINGS, ScannerSettings.class);
     } else {
       // noinspection deprecation
-      settings = getIntent().getParcelableExtra(SETTINGS); // NOSONAR
+      settings = getIntent().getParcelableExtra(Keys.SETTINGS); // NOSONAR
     }
 
     HttpRequest httpRequest;
     if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
-      httpRequest = getIntent().getParcelableExtra(REQUEST, HttpRequest.class);
+      httpRequest = getIntent().getParcelableExtra(Keys.REQUEST, HttpRequest.class);
     } else {
       // noinspection deprecation
-      httpRequest = getIntent().getParcelableExtra(REQUEST); // NOSONAR
+      httpRequest = getIntent().getParcelableExtra(Keys.REQUEST); // NOSONAR
     }
 
     setContentView(R.layout.capture_activity);
@@ -133,7 +130,7 @@ public class CaptureActivity extends AppCompatActivity {
 
   private void finishWithError(String errorMessage) {
     Intent result = new Intent();
-    result.putExtra("error", errorMessage);
+    result.putExtra(Keys.ERROR, errorMessage);
     setResult(CommonStatusCodes.ERROR, result);
     finish();
   }
