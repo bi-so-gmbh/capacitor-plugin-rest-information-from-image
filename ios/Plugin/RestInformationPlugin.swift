@@ -28,7 +28,6 @@ public class RestInformationPlugin: CAPPlugin, CameraViewControllerDelegate {
         }
     }
 
-    // TODO: update for serial
     func onComplete(_ result: [String: Any]) {
         weak var weakSelf = self
         DispatchQueue.main.sync {

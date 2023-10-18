@@ -45,6 +45,12 @@ class Utils {
         return 1;
     }
     
+    /**
+     * Takes a String containing a hex color and turns it into a valid UIColor
+     *
+     * @param hex the String with the color
+     * @return UIColor object
+     */
     public static func hexStringToUIColor(hex: String) -> UIColor {
         
         var cString:String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
@@ -94,6 +100,12 @@ class Utils {
         return Optional(nil)
     }
     
+    /**
+     * Calculates how an image has to be rotated to match the device orientation
+     * 
+     * @param devicePosition which camera is used, defaultas to back camera
+     * @returm a UIImage.Orientation
+     */
     public static func imageOrientation(
         fromDevicePosition devicePosition: AVCaptureDevice.Position = .back
     ) -> UIImage.Orientation {
@@ -120,14 +132,14 @@ class Utils {
     
     private static func currentUIOrientation() -> UIDeviceOrientation {
         let deviceOrientation = { () -> UIDeviceOrientation in
-            switch UIApplication.shared.statusBarOrientation {
+            switch UIDevice.current.orientation {
             case .landscapeLeft:
                 return .landscapeRight
             case .landscapeRight:
                 return .landscapeLeft
             case .portraitUpsideDown:
                 return .portraitUpsideDown
-            case .portrait, .unknown:
+            case .portrait, .unknown, .faceDown, .faceUp:
                 return .portrait
             @unknown default:
                 fatalError()
@@ -142,6 +154,7 @@ class Utils {
         }
         return deviceOrientation()
     }
+    
     /**
      * Rotates an image into the given orientation
      *

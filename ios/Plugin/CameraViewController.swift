@@ -39,7 +39,6 @@ class CameraViewController: UIViewController, RestDataListener {
     
     override func viewDidLoad() {
         cameraOverlay = CameraOverlay(settings: settings, parentView: view)
-        //barcodeAnalyzer = BarcodeAnalyzer(settings: settings, barcodesListener: self, cameraOverlay: cameraOverlay)
         
         if AVCaptureDevice.authorizationStatus(for: .video) == .authorized {
             setupCaptureSession()
@@ -147,7 +146,6 @@ class CameraViewController: UIViewController, RestDataListener {
     @objc func onTouch(_ sender:UITapGestureRecognizer){
         spinner!.isHidden = false
         let photoSettings : AVCapturePhotoSettings = AVCapturePhotoSettings(format: [AVVideoCodecKey:AVVideoCodecType.jpeg])
-
         captureDelegate = ImageCaptureListener(httpRequest: httpRequest, restDataListener: self)
         self.stillImageOutput.capturePhoto(with: photoSettings, delegate: captureDelegate!)
     }
