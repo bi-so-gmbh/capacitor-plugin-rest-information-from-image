@@ -2,8 +2,6 @@ import AVFoundation
 import UIKit
 
 class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
-    public static let ERROR = "error"
-    public static let STATUS = "status"
     let httpRequest: HttpRequest
     let restDataListener : RestDataListener
     var runningTask : Task<Void, Never>?
@@ -15,11 +13,11 @@ class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
     
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         if error != nil {
-            self.restDataListener.onRestData([ImageCaptureListener.ERROR:ErrorMessages.CAMERA_ERROR])
+            self.restDataListener.onRestData([Keys.ERROR:ErrorMessages.CAMERA_ERROR])
             return
         }
         guard let imageData = photo.fileDataRepresentation() else {
-            self.restDataListener.onRestData([ImageCaptureListener.ERROR:ErrorMessages.CAMERA_ERROR])
+            self.restDataListener.onRestData([Keys.ERROR:ErrorMessages.CAMERA_ERROR])
             return
         }
         
@@ -31,7 +29,7 @@ class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
                 self.restDataListener.onRestData(result)
             }
         } else {
-            self.restDataListener.onRestData([ImageCaptureListener.ERROR:ErrorMessages.CAMERA_ERROR])
+            self.restDataListener.onRestData([Keys.ERROR:ErrorMessages.CAMERA_ERROR])
         }
     }
     
@@ -50,9 +48,8 @@ class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
             withJSONObject: body,
             options: []
         ) else {
-            return [ImageCaptureListener.ERROR:ErrorMessages.JSON_ERROR]
+            return [Keys.ERROR:ErrorMessages.JSON_ERROR]
         }
-        
         request.httpBody = bodyData
         
         var result:[String:Any] = [:]
@@ -65,12 +62,12 @@ class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
                 return responseToJson(data: data)
             }
             result = responseToJson(data: data)
-            result[ImageCaptureListener.STATUS] = 200
+            result[Keys.STATUS] = 200
         } catch let error {
             if (error.localizedDescription == "cancelled") {
-                result[ImageCaptureListener.ERROR] = ErrorMessages.CANCELLED
+                result[Keys.ERROR] = ErrorMessages.CANCELLED
             } else {
-                result[ImageCaptureListener.ERROR] = error.localizedDescription
+                result[Keys.ERROR] = error.localizedDescription
                 print("Post Request Error: \(error.localizedDescription)")
             }
         }
@@ -81,7 +78,11 @@ class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
     private func responseToJson(data:Data?) -> [String:Any] {
         guard let responseData = data else {
             print("nil Data received from the server")
-            return [ImageCaptureListener.ERROR: ErrorMessages.EMPTY_RESPONSE]
+            return [Keys.ERROR: ErrorMessages.EMPTY_RESPONSE]
+        }
+        if (responseData.isEmpty) {
+            print("nil Data received from the server")
+            return [Keys.ERROR: ErrorMessages.EMPTY_RESPONSE]
         }
         
         do {
@@ -89,11 +90,11 @@ class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
                 return jsonResponse
             } else {
                 print("data maybe corrupted or in wrong format")
-                return [ImageCaptureListener.ERROR:ErrorMessages.JSON_ERROR]
+                return [Keys.ERROR:ErrorMessages.JSON_ERROR]
             }
         } catch let error {
             print(error.localizedDescription)
-            return [ImageCaptureListener.ERROR:ErrorMessages.JSON_ERROR]
+            return [Keys.ERROR:ErrorMessages.JSON_ERROR]
         }
     }
 }

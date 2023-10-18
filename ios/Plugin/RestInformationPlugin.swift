@@ -8,8 +8,6 @@ import Capacitor
  */
 @objc(RestInformationPlugin)
 public class RestInformationPlugin: CAPPlugin, CameraViewControllerDelegate {
-    public static let SETTINGS = "settings"
-    public static let REQUEST = "request"
     private var call: CAPPluginCall?
     private var settings: ScannerSettings!
     private var httpRequest: HttpRequest!
@@ -19,14 +17,14 @@ public class RestInformationPlugin: CAPPlugin, CameraViewControllerDelegate {
         let options = call.jsObjectRepresentation
         self.call = call
         
-        if (options.isEmpty || !options.keys.contains(RestInformationPlugin.REQUEST)) {
+        if (options.isEmpty || !options.keys.contains(Keys.REQUEST)) {
             call.reject(ErrorMessages.REQUIRED_DATA_MISSING)
             return
         }
         
-        settings = ScannerSettings(options: options[RestInformationPlugin.SETTINGS] as? [String:Any])
+        settings = ScannerSettings(options: options[Keys.SETTINGS] as? [String:Any])
         
-        guard let scanRequest = options[RestInformationPlugin.REQUEST] as? [String:Any]
+        guard let scanRequest = options[Keys.REQUEST] as? [String:Any]
         else {
             call.reject(ErrorMessages.REQUEST_INVALID)
             return
@@ -57,7 +55,7 @@ public class RestInformationPlugin: CAPPlugin, CameraViewControllerDelegate {
             return
         }
         
-        if (!result.keys.contains(ImageCaptureListener.ERROR)) {
+        if (!result.keys.contains(Keys.ERROR)) {
             if (settings.vibrateOnSuccess) {
                 AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(kSystemSoundID_Vibrate)) { }
             }
@@ -79,13 +77,13 @@ public class RestInformationPlugin: CAPPlugin, CameraViewControllerDelegate {
             }
         }
         
-        if (result.keys.contains(ImageCaptureListener.STATUS) && result[ImageCaptureListener.STATUS] as! Int == 200) {
+        if (result.keys.contains(Keys.STATUS) && result[Keys.STATUS] as! Int == 200) {
             self.call!.resolve(result)
-        } else if (result.keys.contains(ImageCaptureListener.ERROR)) {
-            if (result.keys.contains(ImageCaptureListener.STATUS)) {
-                self.call!.reject(result[ImageCaptureListener.ERROR] as! String, result[ImageCaptureListener.STATUS] as? String)
+        } else if (result.keys.contains(Keys.ERROR)) {
+            if (result.keys.contains(Keys.STATUS)) {
+                self.call!.reject(result[Keys.ERROR] as! String, result[Keys.STATUS] as? String)
             } else {
-                self.call!.reject(result[ImageCaptureListener.ERROR] as! String)
+                self.call!.reject(result[Keys.ERROR] as! String)
             }
         } else {
             self.call!.reject(ErrorMessages.UNKNOWN_ERROR)
