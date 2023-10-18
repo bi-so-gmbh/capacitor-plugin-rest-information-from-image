@@ -16,7 +16,6 @@ public class RestInformationPlugin: CAPPlugin, CameraViewControllerDelegate {
     private var player: AVAudioPlayer?
     
     @objc func scan(_ call: CAPPluginCall) {
-        // TODO: get settings and request
         let options = call.jsObjectRepresentation
         self.call = call
         
