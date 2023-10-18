@@ -102,7 +102,7 @@ class Utils {
     
     /**
      * Calculates how an image has to be rotated to match the device orientation
-     * 
+     *
      * @param devicePosition which camera is used, defaultas to back camera
      * @returm a UIImage.Orientation
      */
@@ -195,7 +195,7 @@ class Utils {
         default:
             break
         }
-
+        
         // Now we draw the underlying CGImage into a new context, applying the transform
         // calculated above.
         guard let context = CGContext(data: nil, width: Int(image.size.width), height: Int(image.size.height), bitsPerComponent: image.cgImage!.bitsPerComponent, bytesPerRow: 0, space: image.cgImage!.colorSpace!, bitmapInfo: image.cgImage!.bitmapInfo.rawValue) else {

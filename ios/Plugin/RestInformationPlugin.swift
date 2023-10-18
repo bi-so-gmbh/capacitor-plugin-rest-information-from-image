@@ -12,7 +12,7 @@ public class RestInformationPlugin: CAPPlugin, CameraViewControllerDelegate {
     private var settings: ScannerSettings!
     private var httpRequest: HttpRequest!
     private var player: AVAudioPlayer?
-
+    
     @objc func scan(_ call: CAPPluginCall) {
         // TODO: get settings and request
         let options = call.jsObjectRepresentation
@@ -27,7 +27,7 @@ public class RestInformationPlugin: CAPPlugin, CameraViewControllerDelegate {
             self.bridge!.viewController!.present(cameraViewController, animated: true)
         }
     }
-
+    
     func onComplete(_ result: [String: Any]) {
         weak var weakSelf = self
         DispatchQueue.main.sync {
