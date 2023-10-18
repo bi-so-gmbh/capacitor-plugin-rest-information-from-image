@@ -17,19 +17,27 @@ class HttpRequest: CustomDebugStringConvertible {
     public private(set) var base64Key: String = "fileBase64"
     public private(set) var imageTypeKey: String = "imageType"
     
-    init(request:[String:Any]) {
-        url = URL(string: request["url"] as! String)!
-        headers = request["headers"] as! [String:String]
-        body = request["body"] as! [String:Any]
+    init?(request:[String:Any]) {
+        guard let urlString = request["url"] as? String else {return nil}
+        guard let url = URL(string: urlString) else {return nil}
+        self.url = url
+        
+        if let headers = request["headers"] as? [String:String] {
+            self.headers = headers
+        } else {
+            self.headers = [:]
+        }
+        if let body = request["body"] as? [String:Any] {
+            self.body = body
+        } else {
+            self.body = [:]
+        }
+
         if let temp = request["base64Key"] as? String {
             base64Key = temp
         }
         if let temp = request["imageTypeKey"] as? String {
             imageTypeKey = temp
         }
-    }
-    
-    convenience init() {
-        self.init(request: [:])
     }
 }

@@ -9,7 +9,7 @@ protocol CameraViewControllerDelegate: NSObjectProtocol {
 
 class CameraViewController: UIViewController, RestDataListener {
     weak var delegate: CameraViewControllerDelegate?
-    var captureDelegate : AVCapturePhotoCaptureDelegate?
+    var imageCaptureListener : ImageCaptureListener?
     private let captureSession = AVCaptureSession()
     private let sessionQueue = DispatchQueue(label: "sessionQueue")
     private var previewLayer = AVCaptureVideoPreviewLayer()
@@ -33,7 +33,7 @@ class CameraViewController: UIViewController, RestDataListener {
     
     required init?(coder: NSCoder) {
         self.settings = ScannerSettings()
-        self.httpRequest = HttpRequest()
+        self.httpRequest = HttpRequest(request: [:])!
         super.init(coder: coder)
     }
     
@@ -52,7 +52,7 @@ class CameraViewController: UIViewController, RestDataListener {
                         self.setupUI()
                         self.setOrientation()
                     } else {
-                        self.finishWithError("NO_CAMERA_PERMISSION")
+                        self.finishWithError(ErrorMessages.NO_CAMERA_PERMISSION)
                     }
                 }
             })
@@ -69,6 +69,7 @@ class CameraViewController: UIViewController, RestDataListener {
     }
     
     override func viewDidDisappear(_ animated: Bool) {
+        imageCaptureListener?.runningTask?.cancel()
         stopSession()
     }
     
@@ -96,12 +97,12 @@ class CameraViewController: UIViewController, RestDataListener {
     
     private func setupCaptureSession() {
         guard let videoDevice = captureDevice() else {
-            finishWithError("NO_CAMERA")
+            finishWithError(ErrorMessages.NO_CAMERA)
             return
             
         }
         guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice) else {
-            finishWithError("NO_CAMERA")
+            finishWithError(ErrorMessages.NO_CAMERA)
             return
         }
         guard captureSession.canAddInput(videoDeviceInput) else { return }
@@ -116,7 +117,7 @@ class CameraViewController: UIViewController, RestDataListener {
         previewLayer.connection?.videoOrientation = .portrait
         
         guard captureSession.canAddOutput(stillImageOutput) else {
-            finishWithError("CANT_TAKE_PICTURE")
+            finishWithError(ErrorMessages.CAMERA_ERROR)
             return
         }
         captureSession.addOutput(stillImageOutput)
@@ -146,8 +147,8 @@ class CameraViewController: UIViewController, RestDataListener {
     @objc func onTouch(_ sender:UITapGestureRecognizer){
         spinner!.isHidden = false
         let photoSettings : AVCapturePhotoSettings = AVCapturePhotoSettings(format: [AVVideoCodecKey:AVVideoCodecType.jpeg])
-        captureDelegate = ImageCaptureListener(httpRequest: httpRequest, restDataListener: self)
-        self.stillImageOutput.capturePhoto(with: photoSettings, delegate: captureDelegate!)
+        imageCaptureListener = ImageCaptureListener(httpRequest: httpRequest, restDataListener: self)
+        self.stillImageOutput.capturePhoto(with: photoSettings, delegate: imageCaptureListener!)
     }
     
     private func createTorchButton() -> UIButton? {

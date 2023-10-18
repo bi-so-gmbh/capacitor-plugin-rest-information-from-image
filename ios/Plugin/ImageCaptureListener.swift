@@ -2,9 +2,11 @@ import AVFoundation
 import UIKit
 
 class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
-    
+    public static let ERROR = "error"
+    public static let STATUS = "status"
     let httpRequest: HttpRequest
     let restDataListener : RestDataListener
+    var runningTask : Task<Void, Never>?
     
     init(httpRequest: HttpRequest, restDataListener: RestDataListener) {
         self.httpRequest = httpRequest
@@ -12,19 +14,24 @@ class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
     }
     
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
-        if let error {
-            print("Error processing photo: \(error.localizedDescription)")
+        if error != nil {
+            self.restDataListener.onRestData([ImageCaptureListener.ERROR:ErrorMessages.CAMERA_ERROR])
             return
         }
-        guard let imageData = photo.fileDataRepresentation() else { return }
+        guard let imageData = photo.fileDataRepresentation() else {
+            self.restDataListener.onRestData([ImageCaptureListener.ERROR:ErrorMessages.CAMERA_ERROR])
+            return
+        }
         
         var image = UIImage(data: imageData)
         image = Utils.rotateImage(image: image!, orientation: Utils.imageOrientation(fromDevicePosition: .back))
-        let base64 = image!.jpegData(compressionQuality: 0.75)?.base64EncodedString() ?? "error"
-        
-        Task.init {
-            let result = await doPOSTRequest(base64Image: base64)
-            self.restDataListener.onRestData(result)
+        if let base64 = image?.jpegData(compressionQuality: 0.75)?.base64EncodedString() {
+            runningTask = Task {
+                let result = await doPOSTRequest(base64Image: base64)
+                self.restDataListener.onRestData(result)
+            }
+        } else {
+            self.restDataListener.onRestData([ImageCaptureListener.ERROR:ErrorMessages.CAMERA_ERROR])
         }
     }
     
@@ -39,12 +46,14 @@ class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
         body[httpRequest.base64Key] = base64Image
         body[httpRequest.imageTypeKey] = "jpeg"
         
-        let bodyData = try? JSONSerialization.data(
+        guard let bodyData = try? JSONSerialization.data(
             withJSONObject: body,
             options: []
-        )
+        ) else {
+            return [ImageCaptureListener.ERROR:ErrorMessages.JSON_ERROR]
+        }
         
-        request.httpBody = bodyData!
+        request.httpBody = bodyData
         
         var result:[String:Any] = [:]
         
@@ -56,10 +65,14 @@ class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
                 return responseToJson(data: data)
             }
             result = responseToJson(data: data)
-            result["status"] = 200
+            result[ImageCaptureListener.STATUS] = 200
         } catch let error {
-            result["error"] = error.localizedDescription
-            print("Post Request Error: \(error.localizedDescription)")
+            if (error.localizedDescription == "cancelled") {
+                result[ImageCaptureListener.ERROR] = ErrorMessages.CANCELLED
+            } else {
+                result[ImageCaptureListener.ERROR] = error.localizedDescription
+                print("Post Request Error: \(error.localizedDescription)")
+            }
         }
         
         return result
@@ -68,7 +81,7 @@ class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
     private func responseToJson(data:Data?) -> [String:Any] {
         guard let responseData = data else {
             print("nil Data received from the server")
-            return ["error": "no response"]
+            return [ImageCaptureListener.ERROR: ErrorMessages.EMPTY_RESPONSE]
         }
         
         do {
@@ -76,11 +89,11 @@ class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
                 return jsonResponse
             } else {
                 print("data maybe corrupted or in wrong format")
-                return ["error":"response unreadable"]
+                return [ImageCaptureListener.ERROR:ErrorMessages.JSON_ERROR]
             }
         } catch let error {
             print(error.localizedDescription)
-            return ["error":error.localizedDescription]
+            return [ImageCaptureListener.ERROR:ErrorMessages.JSON_ERROR]
         }
     }
 }

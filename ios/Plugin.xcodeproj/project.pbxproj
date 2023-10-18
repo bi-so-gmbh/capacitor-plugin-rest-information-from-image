@@ -13,6 +13,7 @@
 		50ADFF92201F53D600D50D53 /* Plugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ADFF88201F53D600D50D53 /* Plugin.framework */; };
 		50ADFF97201F53D600D50D53 /* RestInformationPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ADFF96201F53D600D50D53 /* RestInformationPluginTests.swift */; };
 		50ADFFA42020D75100D50D53 /* Capacitor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ADFFA52020D75100D50D53 /* Capacitor.framework */; };
+		DD0D265D2ADFFB9C00346BA3 /* ErrorMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0D265C2ADFFB9C00346BA3 /* ErrorMessages.swift */; };
 		DD36996B2ADEA8E900C93EBD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DD36996A2ADEA8E900C93EBD /* Assets.xcassets */; };
 		DD3A78D32AD6F375008FF58A /* ScannerSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3A78CC2AD6F375008FF58A /* ScannerSettings.swift */; };
 		DD3A78D42AD6F375008FF58A /* CameraOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3A78CD2AD6F375008FF58A /* CameraOverlay.swift */; };
@@ -47,6 +48,7 @@
 		5E23F77F099397094342571A /* Pods-Plugin.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Plugin.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Plugin/Pods-Plugin.debug.xcconfig"; sourceTree = "<group>"; };
 		91781294A431A2A7CC6EB714 /* Pods-Plugin.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Plugin.release.xcconfig"; path = "Pods/Target Support Files/Pods-Plugin/Pods-Plugin.release.xcconfig"; sourceTree = "<group>"; };
 		96ED1B6440D6672E406C8D19 /* Pods-PluginTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PluginTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PluginTests/Pods-PluginTests.debug.xcconfig"; sourceTree = "<group>"; };
+		DD0D265C2ADFFB9C00346BA3 /* ErrorMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessages.swift; sourceTree = "<group>"; };
 		DD36996A2ADEA8E900C93EBD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DD3A78CC2AD6F375008FF58A /* ScannerSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScannerSettings.swift; sourceTree = "<group>"; };
 		DD3A78CD2AD6F375008FF58A /* CameraOverlay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraOverlay.swift; sourceTree = "<group>"; };
@@ -118,6 +120,7 @@
 				DD3A78D22AD6F375008FF58A /* Utils.swift */,
 				2F98D68124C9AAE400613A4C /* RestInformationPlugin.swift */,
 				50ADFF8C201F53D600D50D53 /* Info.plist */,
+				DD0D265C2ADFFB9C00346BA3 /* ErrorMessages.swift */,
 			);
 			path = Plugin;
 			sourceTree = "<group>";
@@ -336,6 +339,7 @@
 				DD3A78D42AD6F375008FF58A /* CameraOverlay.swift in Sources */,
 				DD3A78DD2AD6F3ED008FF58A /* HttpRequest.swift in Sources */,
 				DD3A78D92AD6F375008FF58A /* Utils.swift in Sources */,
+				DD0D265D2ADFFB9C00346BA3 /* ErrorMessages.swift in Sources */,
 				DD3A78DC2AD6F3ED008FF58A /* ImageCaptureListener.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -8,6 +8,8 @@ import Capacitor
  */
 @objc(RestInformationPlugin)
 public class RestInformationPlugin: CAPPlugin, CameraViewControllerDelegate {
+    public static let SETTINGS = "settings"
+    public static let REQUEST = "request"
     private var call: CAPPluginCall?
     private var settings: ScannerSettings!
     private var httpRequest: HttpRequest!
@@ -18,8 +20,23 @@ public class RestInformationPlugin: CAPPlugin, CameraViewControllerDelegate {
         let options = call.jsObjectRepresentation
         self.call = call
         
-        settings = ScannerSettings(options: options["settings"] as! [String : Any])
-        httpRequest = HttpRequest(request: options["request"] as! [String:Any])
+        if (options.isEmpty || !options.keys.contains(RestInformationPlugin.REQUEST)) {
+            call.reject(ErrorMessages.REQUIRED_DATA_MISSING)
+            return
+        }
+        
+        settings = ScannerSettings(options: options[RestInformationPlugin.SETTINGS] as? [String:Any])
+        
+        guard let scanRequest = options[RestInformationPlugin.REQUEST] as? [String:Any]
+        else {
+            call.reject(ErrorMessages.REQUEST_INVALID)
+            return
+        }
+        httpRequest = HttpRequest(request: scanRequest)
+        if (httpRequest == nil) {
+            call.reject(ErrorMessages.INVALID_URL)
+            return
+        }
         
         DispatchQueue.main.async {
             let cameraViewController = CameraViewController(settings: self.settings, request: self.httpRequest)
@@ -37,38 +54,42 @@ public class RestInformationPlugin: CAPPlugin, CameraViewControllerDelegate {
             self.bridge!.viewController!.dismiss(animated: true)
         }
         if (result.isEmpty) {
-            self.call!.reject("EMPTY")
+            self.call!.reject(ErrorMessages.EMPTY_RESPONSE)
             return
         }
         
-        if (settings.vibrateOnSuccess) {
-            AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(kSystemSoundID_Vibrate)) { }
-        }
-        if (settings.beepOnSuccess) {
-            if let audioData = NSDataAsset(name: "beep")?.data {
-                do {
-                    try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
-                    try AVAudioSession.sharedInstance().setActive(true)
-                    
-                    player = try AVAudioPlayer(data: audioData)
-                    
-                    if let unwrappedPlayer = player {
-                        unwrappedPlayer.play()
+        if (!result.keys.contains(ImageCaptureListener.ERROR)) {
+            if (settings.vibrateOnSuccess) {
+                AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(kSystemSoundID_Vibrate)) { }
+            }
+            if (settings.beepOnSuccess) {
+                if let audioData = NSDataAsset(name: "beep")?.data {
+                    do {
+                        try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+                        try AVAudioSession.sharedInstance().setActive(true)
+                        
+                        player = try AVAudioPlayer(data: audioData)
+                        
+                        if let unwrappedPlayer = player {
+                            unwrappedPlayer.play()
+                        }
+                    } catch let error {
+                        print(error.localizedDescription)
                     }
-                } catch let error {
-                    print(error.localizedDescription)
                 }
             }
         }
         
-        if (result.keys.contains("status") && result["status"] as! Int == 200) {
+        if (result.keys.contains(ImageCaptureListener.STATUS) && result[ImageCaptureListener.STATUS] as! Int == 200) {
             self.call!.resolve(result)
-        } else {
-            if(result.keys.contains("status")) {
-                self.call!.reject(result["error"] as! String, result["status"] as? String)
+        } else if (result.keys.contains(ImageCaptureListener.ERROR)) {
+            if (result.keys.contains(ImageCaptureListener.STATUS)) {
+                self.call!.reject(result[ImageCaptureListener.ERROR] as! String, result[ImageCaptureListener.STATUS] as? String)
             } else {
-                self.call!.reject(result["error"] as! String)
+                self.call!.reject(result[ImageCaptureListener.ERROR] as! String)
             }
+        } else {
+            self.call!.reject(ErrorMessages.UNKNOWN_ERROR)
         }
     }
     

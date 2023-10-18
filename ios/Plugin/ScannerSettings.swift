@@ -38,86 +38,88 @@ class ScannerSettings: CustomDebugStringConvertible {
     public private(set) var loadingCircleUIColor: UIColor
     public private(set) var loadingCircleSize: Int = 30
     
-    init(options:[String:Any]) {
-        for (key, value) in options {
-            switch (key) {
-            case Settings.DETECTOR_ASPECT_RATIO:
-                if let temp = value as? String {
-                    aspectRatio = temp
+    init(options:[String:Any]?) {
+        if let options = options {
+            for (key, value) in options {
+                switch (key) {
+                case Settings.DETECTOR_ASPECT_RATIO:
+                    if let temp = value as? String {
+                        aspectRatio = temp
+                    }
+                    break
+                case Settings.DETECTOR_SIZE:
+                    if let temp = Utils.getDouble(input: value) {
+                        detectorSize = temp
+                    }
+                    break
+                case Settings.DRAW_FOCUS_RECT:
+                    if let temp = value as? Bool {
+                        drawFocusRect = temp
+                    }
+                    break
+                case Settings.FOCUS_RECT_COLOR:
+                    if let temp = value as? String {
+                        focusRectColor = temp
+                    }
+                    break
+                case Settings.FOCUS_RECT_BORDER_RADIUS:
+                    if let temp = Utils.getInt(input: value) {
+                        focusRectBorderRadius = max(1, temp + Self.CORNER_RADIUS_ADJUSTMENT)
+                    }
+                    break
+                case Settings.FOCUS_RECT_BORDER_THICKNESS:
+                    if let temp = Utils.getInt(input: value) {
+                        focusRectBorderThickness = max(1, temp + Self.LINE_THICKNESS_ADJUSTMENT)
+                    }
+                    break
+                case Settings.DRAW_FOCUS_LINE:
+                    if let temp = value as? Bool {
+                        drawFocusLine = temp
+                    }
+                    break
+                case Settings.FOCUS_LINE_COLOR:
+                    if let temp = value as? String {
+                        focusLineColor = temp
+                    }
+                    break
+                case Settings.FOCUS_LINE_THICKNESS:
+                    if let temp = Utils.getInt(input: value) {
+                        focusLineThickness = max(1, temp + Self.LINE_THICKNESS_ADJUSTMENT)
+                    }
+                    break
+                case Settings.DRAW_FOCUS_BACKGROUND:
+                    if let temp = value as? Bool {
+                        drawFocusBackground = temp
+                    }
+                    break
+                case Settings.FOCUS_BACKGROUND_COLOR:
+                    if let temp = value as? String {
+                        focusBackgroundColor = temp
+                    }
+                    break
+                case Settings.BEEP_ON_SUCCESS:
+                    if let temp = value as? Bool {
+                        beepOnSuccess = temp
+                    }
+                    break
+                case Settings.VIBRATE_ON_SUCCESS:
+                    if let temp = value as? Bool {
+                        vibrateOnSuccess = temp
+                    }
+                    break
+                case Settings.LOADING_CIRCLE_COLOR:
+                    if let temp = value as? String {
+                        loadingCircleColor = temp
+                    }
+                    break
+                case Settings.LOADING_CIRCLE_SIZE:
+                    if let temp = Utils.getInt(input: value) {
+                        loadingCircleSize = temp
+                    }
+                    break
+                default:
+                    print("Unknown option: \(key)")
                 }
-                break
-            case Settings.DETECTOR_SIZE:
-                if let temp = Utils.getDouble(input: value) {
-                    detectorSize = temp
-                }
-                break
-            case Settings.DRAW_FOCUS_RECT:
-                if let temp = value as? Bool {
-                    drawFocusRect = temp
-                }
-                break
-            case Settings.FOCUS_RECT_COLOR:
-                if let temp = value as? String {
-                    focusRectColor = temp
-                }
-                break
-            case Settings.FOCUS_RECT_BORDER_RADIUS:
-                if let temp = Utils.getInt(input: value) {
-                    focusRectBorderRadius = max(1, temp + Self.CORNER_RADIUS_ADJUSTMENT)
-                }
-                break
-            case Settings.FOCUS_RECT_BORDER_THICKNESS:
-                if let temp = Utils.getInt(input: value) {
-                    focusRectBorderThickness = max(1, temp + Self.LINE_THICKNESS_ADJUSTMENT)
-                }
-                break
-            case Settings.DRAW_FOCUS_LINE:
-                if let temp = value as? Bool {
-                    drawFocusLine = temp
-                }
-                break
-            case Settings.FOCUS_LINE_COLOR:
-                if let temp = value as? String {
-                    focusLineColor = temp
-                }
-                break
-            case Settings.FOCUS_LINE_THICKNESS:
-                if let temp = Utils.getInt(input: value) {
-                    focusLineThickness = max(1, temp + Self.LINE_THICKNESS_ADJUSTMENT)
-                }
-                break
-            case Settings.DRAW_FOCUS_BACKGROUND:
-                if let temp = value as? Bool {
-                    drawFocusBackground = temp
-                }
-                break
-            case Settings.FOCUS_BACKGROUND_COLOR:
-                if let temp = value as? String {
-                    focusBackgroundColor = temp
-                }
-                break
-            case Settings.BEEP_ON_SUCCESS:
-                if let temp = value as? Bool {
-                    beepOnSuccess = temp
-                }
-                break
-            case Settings.VIBRATE_ON_SUCCESS:
-                if let temp = value as? Bool {
-                    vibrateOnSuccess = temp
-                }
-                break
-            case Settings.LOADING_CIRCLE_COLOR:
-                if let temp = value as? String {
-                    loadingCircleColor = temp
-                }
-                break
-            case Settings.LOADING_CIRCLE_SIZE:
-                if let temp = Utils.getInt(input: value) {
-                    loadingCircleSize = temp
-                }
-                break
-            default:
-                print("Unknown option: \(key)")
             }
         }
         
@@ -126,6 +128,7 @@ class ScannerSettings: CustomDebugStringConvertible {
         focusBackgroundUIColor = Utils.hexStringToUIColor(hex: focusBackgroundColor)
         loadingCircleUIColor = Utils.hexStringToUIColor(hex: loadingCircleColor)
         aspectRatioF = Utils.getAspectRatioFromString(aspectRatioString: aspectRatio)
+
     }
     
     convenience init() {
