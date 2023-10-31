@@ -1,6 +1,6 @@
 {
   "name": "capacitor-plugin-rest-information-from-image",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Gets image based information from a REST api that can be configured. The information returned has to be in json format",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
