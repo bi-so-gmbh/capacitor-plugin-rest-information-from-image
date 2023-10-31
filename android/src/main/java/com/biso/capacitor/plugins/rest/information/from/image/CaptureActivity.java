@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ProgressBar;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +26,7 @@ import androidx.camera.core.Preview;
 import androidx.camera.core.Preview.SurfaceProvider;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
+import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import com.biso.capacitor.plugins.rest.information.from.image.databinding.CaptureActivityBinding;
@@ -93,19 +95,24 @@ public class CaptureActivity extends AppCompatActivity {
       requestPermissionLauncher.launch(permission.CAMERA);
     }
 
-    binding.loadingCircle.setVisibility(View.GONE);
+    ProgressBar progressBar = new ProgressBar(CaptureActivity.this);
+    progressBar.setIndeterminate(true);
+    progressBar.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)); // NOSONAR
+    progressBar.setVisibility(View.GONE);
+
+    binding.getRoot().addView(progressBar);
 
     binding.topLayout.setOnClickListener(v -> {
       if (readyToTakePicture) {
         v.performHapticFeedback(MotionEvent.AXIS_TOUCH_MINOR);
         readyToTakePicture = false;
-        binding.loadingCircle.setIndeterminateTintList(
+        progressBar.setIndeterminateTintList(
             ColorStateList.valueOf(Color.parseColor(settings.getLoadingCircleColor())));
         // original size is 100dp so lets scale it to match the setting
         float scale = settings.getLoadingCircleSize() / 100f;
-        binding.loadingCircle.setScaleX(scale);
-        binding.loadingCircle.setScaleY(scale);
-        binding.loadingCircle.setVisibility(View.VISIBLE);
+        progressBar.setScaleX(scale);
+        progressBar.setScaleY(scale);
+        progressBar.setVisibility(View.VISIBLE);
         imageCapture.takePicture(executor,
             new ImageCaptureListener(httpRequest, this::finishWithSuccess));
       }
