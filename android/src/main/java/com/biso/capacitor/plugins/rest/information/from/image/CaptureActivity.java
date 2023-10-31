@@ -14,9 +14,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,9 +25,9 @@ import androidx.camera.core.Preview;
 import androidx.camera.core.Preview.SurfaceProvider;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
+import com.biso.capacitor.plugins.rest.information.from.image.databinding.CaptureActivityBinding;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.concurrent.ExecutionException;
@@ -57,6 +54,9 @@ public class CaptureActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    CaptureActivityBinding binding = CaptureActivityBinding.inflate(getLayoutInflater());
+    View view = binding.getRoot();
+    setContentView(view);
 
     CameraManager cameraManager = (CameraManager) this.getSystemService(Context.CAMERA_SERVICE);
     try {
@@ -84,44 +84,39 @@ public class CaptureActivity extends AppCompatActivity {
       httpRequest = getIntent().getParcelableExtra(Keys.REQUEST); // NOSONAR
     }
 
-    setContentView(R.layout.capture_activity);
     CameraOverlay cameraOverlay = new CameraOverlay(this, settings);
 
-    ConstraintLayout constraintLayout = findViewById(R.id.topLayout);
-    constraintLayout.addView(cameraOverlay);
+    binding.topLayout.addView(cameraOverlay);
     if (checkSelfPermission(permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
       startCamera();
     } else {
       requestPermissionLauncher.launch(permission.CAMERA);
     }
 
-    ProgressBar progressBar = findViewById(R.id.loadingCircle);
-    progressBar.setVisibility(View.GONE);
+    binding.loadingCircle.setVisibility(View.GONE);
 
-    constraintLayout.setOnClickListener(v -> {
+    binding.topLayout.setOnClickListener(v -> {
       if (readyToTakePicture) {
         v.performHapticFeedback(MotionEvent.AXIS_TOUCH_MINOR);
         readyToTakePicture = false;
-        progressBar.setIndeterminateTintList(
+        binding.loadingCircle.setIndeterminateTintList(
             ColorStateList.valueOf(Color.parseColor(settings.getLoadingCircleColor())));
         // original size is 100dp so lets scale it to match the setting
         float scale = settings.getLoadingCircleSize() / 100f;
-        progressBar.setScaleX(scale);
-        progressBar.setScaleY(scale);
-        progressBar.setVisibility(View.VISIBLE);
+        binding.loadingCircle.setScaleX(scale);
+        binding.loadingCircle.setScaleY(scale);
+        binding.loadingCircle.setVisibility(View.VISIBLE);
         imageCapture.takePicture(executor,
             new ImageCaptureListener(httpRequest, this::finishWithSuccess));
       }
     });
 
-    ImageButton torchButton = findViewById(R.id.torch_button);
-
-    torchButton.setOnClickListener(v -> {
+    binding.torchButton.setOnClickListener(v -> {
       LiveData<Integer> flashState = camera.getCameraInfo().getTorchState();
       if (flashState.getValue() != null) {
         v.performHapticFeedback(MotionEvent.AXIS_TOUCH_MINOR);
         boolean state = flashState.getValue() == 1;
-        torchButton.setBackgroundResource(
+        binding.torchButton.setBackgroundResource(
             !state ? R.drawable.torch_active : R.drawable.torch_inactive);
         camera.getCameraControl().enableTorch(!state);
       }
