@@ -88,7 +88,6 @@ public class ImageCaptureListener extends OnImageCapturedCallback {
         httpURLConnection.setRequestProperty(key, httpRequest.getHeaders().getString(key));
       }
       JSONObject body = httpRequest.getBody();
-      System.out.println(body.toString());
       body.put(httpRequest.getBase64Key(), base64Image);
       body.put(httpRequest.getImageTypeKey(), "jpeg");
 
