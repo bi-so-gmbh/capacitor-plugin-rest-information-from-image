@@ -128,7 +128,7 @@ class CameraViewController: UIViewController, RestDataListener {
         view.layer.addSublayer(previewLayer)
         cameraOverlay.setPreviewLayer(previewLayer)
         view.bringSubviewToFront(cameraOverlay)
-        
+
         torchButton = createTorchButton()
         let gesture = UITapGestureRecognizer(target: self, action:  #selector (self.onTouch (_:)))
         view.addGestureRecognizer(gesture)
@@ -147,7 +147,7 @@ class CameraViewController: UIViewController, RestDataListener {
     @objc func onTouch(_ sender:UITapGestureRecognizer){
         spinner!.isHidden = false
         let photoSettings : AVCapturePhotoSettings = AVCapturePhotoSettings(format: [AVVideoCodecKey:AVVideoCodecType.jpeg])
-        imageCaptureListener = ImageCaptureListener(httpRequest: httpRequest, restDataListener: self)
+        imageCaptureListener = ImageCaptureListener(httpRequest: httpRequest, restDataListener: self, captureSession: captureSession)
         self.stillImageOutput.capturePhoto(with: photoSettings, delegate: imageCaptureListener!)
     }
     

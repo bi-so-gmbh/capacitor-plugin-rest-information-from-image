@@ -4,14 +4,17 @@ import UIKit
 class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
     let httpRequest: HttpRequest
     let restDataListener : RestDataListener
+    let captureSession: AVCaptureSession
     var runningTask : Task<Void, Never>?
     
-    init(httpRequest: HttpRequest, restDataListener: RestDataListener) {
+    init(httpRequest: HttpRequest, restDataListener: RestDataListener, captureSession: AVCaptureSession) {
         self.httpRequest = httpRequest
         self.restDataListener = restDataListener
+        self.captureSession = captureSession
     }
     
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+        captureSession.stopRunning()
         if error != nil {
             self.restDataListener.onRestData([Keys.ERROR:ErrorMessages.CAMERA_ERROR])
             return
