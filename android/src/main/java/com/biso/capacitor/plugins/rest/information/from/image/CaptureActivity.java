@@ -42,6 +42,8 @@ public class CaptureActivity extends AppCompatActivity {
   private Camera camera;
 
   private ImageCapture imageCapture;
+  private ProcessCameraProvider cameraProvider;
+  private Preview preview;
   private boolean readyToTakePicture = true;
 
   private final ActivityResultLauncher<String> requestPermissionLauncher =
@@ -115,6 +117,7 @@ public class CaptureActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         imageCapture.takePicture(executor,
             new ImageCaptureListener(httpRequest, this::finishWithSuccess));
+        cameraProvider.unbind(preview);
       }
     });
 
@@ -153,8 +156,8 @@ public class CaptureActivity extends AppCompatActivity {
         this);
     cameraProviderFuture.addListener(() -> {
       try {
-        CaptureActivity.this.bindPreview(cameraProviderFuture.get(),
-            previewView.getSurfaceProvider());
+        cameraProvider = cameraProviderFuture.get();
+        CaptureActivity.this.bindPreview(cameraProvider, previewView.getSurfaceProvider());
       } catch (ExecutionException | InterruptedException e) { // NOSONAR
         // No errors need to be handled for this Future.
         // This should never be reached.
@@ -167,7 +170,7 @@ public class CaptureActivity extends AppCompatActivity {
    * Binding to camera
    */
   private void bindPreview(ProcessCameraProvider cameraProvider, SurfaceProvider surfaceProvider) {
-    Preview preview = new Preview.Builder().build();
+    preview = new Preview.Builder().build();
 
     CameraSelector cameraSelector = new CameraSelector.Builder()
         .requireLensFacing(CameraSelector.LENS_FACING_BACK)
