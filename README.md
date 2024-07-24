@@ -3,12 +3,26 @@
 Gets image based information from a REST api that can be configured. The information returned has to be in json format, and it only does POST calls. 
 The image will be sent as part of the body as a base64 string, the key is configurable. Also part of the body is the image type, currently hardcoded as jpeg, whose key can also be configured.
 
+> [!IMPORTANT]  
+> Version 2.x.x and upwards are Capacitor 6 versions. For Capacitor 5 use version 1.x.x
+
 ## Install
 
 ```bash
 npm install capacitor-plugin-rest-information-from-image
 npx cap sync
 ```
+
+## Publish
+To publish to npm use 
+```bash
+npm publish --access public
+```
+If this is the first time you publish anything (or you were logged out) use 
+```bash
+npm adduser  
+```
+and log in via browser.
 
 ## API
 
@@ -142,6 +156,8 @@ If the value is greater than 1 the detector will not be visible on the screen.
 
 Construct a type with a set of properties K of type T
 
-<code>{ [P in K]: T; }</code>
+<code>{
+ [P in K]: T;
+ }</code>
 
 </docgen-api>
