@@ -1,6 +1,5 @@
 {
-  "name": "capacitor-plugin-rest-information-from-image",
-  "version": "1.0.0",
+  "name": "@biso_gmbh/capacitor-plugin-rest-information-from-image",
   "version": "2.0.0",
   "description": "Gets image based information from a REST api that can be configured. The information returned has to be in json format",
   "main": "dist/plugin.cjs.js",
@@ -14,7 +13,11 @@
     "ios/Plugin/",
     "CapacitorPluginRestInformationFromImage.podspec"
   ],
-  "author": "Nadine Seibel",
+  "author": {
+    "name": "Nadine Seibel",
+    "email": "nadine.seibel@bi-so.com",
+    "url": "https://bi-so.de"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
