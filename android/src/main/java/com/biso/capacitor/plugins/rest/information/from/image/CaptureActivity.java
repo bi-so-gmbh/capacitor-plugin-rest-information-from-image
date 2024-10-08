@@ -12,13 +12,14 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Size;
 import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.View;
 import android.widget.ProgressBar;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.camera.core.AspectRatio;
 import androidx.camera.core.Camera;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageCapture;
@@ -45,6 +46,7 @@ public class CaptureActivity extends AppCompatActivity {
   private ProcessCameraProvider cameraProvider;
   private Preview preview;
   private boolean readyToTakePicture = true;
+  private ScannerSettings scannerSettings;
 
   private final ActivityResultLauncher<String> requestPermissionLauncher =
       registerForActivityResult(new RequestPermission(), isGranted -> {
@@ -72,12 +74,11 @@ public class CaptureActivity extends AppCompatActivity {
       finishWithError(ErrorMessages.NO_CAMERA);
     }
 
-    ScannerSettings settings;
     if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
-      settings = getIntent().getParcelableExtra(Keys.SETTINGS, ScannerSettings.class);
+      scannerSettings = getIntent().getParcelableExtra(Keys.SETTINGS, ScannerSettings.class);
     } else {
       // noinspection deprecation
-      settings = getIntent().getParcelableExtra(Keys.SETTINGS); // NOSONAR
+      scannerSettings = getIntent().getParcelableExtra(Keys.SETTINGS); // NOSONAR
     }
 
     HttpRequest httpRequest;
@@ -88,10 +89,10 @@ public class CaptureActivity extends AppCompatActivity {
       httpRequest = getIntent().getParcelableExtra(Keys.REQUEST); // NOSONAR
     }
 
-    CameraOverlay cameraOverlay = new CameraOverlay(this, settings);
+    CameraOverlay cameraOverlay = new CameraOverlay(this, scannerSettings);
 
     binding.topLayout.addView(cameraOverlay);
-    if (checkSelfPermission(permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+    if (VERSION.SDK_INT >= VERSION_CODES.M && checkSelfPermission(permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
       startCamera();
     } else {
       requestPermissionLauncher.launch(permission.CAMERA);
@@ -109,9 +110,9 @@ public class CaptureActivity extends AppCompatActivity {
         v.performHapticFeedback(MotionEvent.AXIS_TOUCH_MINOR);
         readyToTakePicture = false;
         progressBar.setIndeterminateTintList(
-            ColorStateList.valueOf(Color.parseColor(settings.getLoadingCircleColor())));
+            ColorStateList.valueOf(Color.parseColor(scannerSettings.getLoadingCircleColor())));
         // original size is 100dp so lets scale it to match the setting
-        float scale = settings.getLoadingCircleSize() / 100f;
+        float scale = scannerSettings.getLoadingCircleSize() / 100f;
         progressBar.setScaleX(scale);
         progressBar.setScaleY(scale);
         progressBar.setVisibility(View.VISIBLE);
@@ -179,7 +180,8 @@ public class CaptureActivity extends AppCompatActivity {
     preview.setSurfaceProvider(surfaceProvider);
 
     imageCapture = new ImageCapture.Builder()
-        .setTargetAspectRatio(AspectRatio.RATIO_16_9)
+      .setTargetRotation(Surface.ROTATION_90)
+      .setTargetResolution(new Size(scannerSettings.getImageWidth(), scannerSettings.getImageHeight()))
         .build();
     camera = cameraProvider.bindToLifecycle(this, cameraSelector, imageCapture, preview);
   }

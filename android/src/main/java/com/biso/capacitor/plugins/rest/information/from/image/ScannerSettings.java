@@ -2,6 +2,8 @@ package com.biso.capacitor.plugins.rest.information.from.image;
 
 import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.LOADING_CIRCLE_COLOR;
 import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.LOADING_CIRCLE_SIZE;
+import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.IMAGE_HEIGHT;
+import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.IMAGE_WIDTH;
 import static com.biso.capacitor.plugins.rest.information.from.image.Utils.getAspectRatioFromString;
 import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.BEEP_ON_SUCCESS;
 import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.DETECTOR_ASPECT_RATIO;
@@ -44,6 +46,8 @@ public class ScannerSettings implements Parcelable {
   private boolean vibrateOnSuccess = false;
   private String loadingCircleColor = "#FF00FF";
   private int loadingCircleSize = 20;
+  private int imageWidth = 720;
+  private int imageHeight = 1280;
 
   public ScannerSettings(JSONObject settings) {
     Iterator<String> keys = settings.keys();
@@ -109,6 +113,12 @@ public class ScannerSettings implements Parcelable {
             break;
           case LOADING_CIRCLE_SIZE:
             loadingCircleSize = settings.optInt(LOADING_CIRCLE_SIZE.value(), getLoadingCircleSize());
+            break;
+          case IMAGE_WIDTH:
+            imageWidth = settings.optInt(IMAGE_WIDTH.value(), getImageWidth());
+            break;
+          case IMAGE_HEIGHT:
+            imageHeight = settings.optInt(IMAGE_HEIGHT.value(), getImageHeight());
             break;
           default:
             Log.e("SETTINGS", "No known setting for " + key);
@@ -184,6 +194,14 @@ public class ScannerSettings implements Parcelable {
     return loadingCircleSize;
   }
 
+  public int getImageWidth() {
+    return imageWidth;
+  }
+
+  public int getImageHeight() {
+    return imageHeight;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -208,7 +226,9 @@ public class ScannerSettings implements Parcelable {
         && getFocusLineColor().equals(that.getFocusLineColor()) && getFocusBackgroundColor().equals(
         that.getFocusBackgroundColor())
         && getLoadingCircleColor().equals(that.getLoadingCircleColor())
-        && getLoadingCircleSize() == that.getLoadingCircleSize();
+        && getLoadingCircleSize() == that.getLoadingCircleSize()
+        && getImageWidth() == that.getImageWidth()
+        && getImageHeight() == that.getImageHeight();
   }
 
   @Override
@@ -229,7 +249,9 @@ public class ScannerSettings implements Parcelable {
         isBeepOnSuccess(),
         isVibrateOnSuccess(),
         getLoadingCircleColor(),
-        getLoadingCircleSize()
+        getLoadingCircleSize(),
+        getImageWidth(),
+        getImageHeight()
     );
   }
 
@@ -256,6 +278,8 @@ public class ScannerSettings implements Parcelable {
     dest.writeByte(this.isVibrateOnSuccess() ? (byte) 1 : (byte) 0);
     dest.writeString(this.getLoadingCircleColor());
     dest.writeInt(this.getLoadingCircleSize());
+    dest.writeInt(this.getImageWidth());
+    dest.writeInt(this.getImageHeight());
   }
 
   protected ScannerSettings(Parcel in) {
@@ -275,6 +299,8 @@ public class ScannerSettings implements Parcelable {
     this.vibrateOnSuccess = in.readByte() != 0;
     this.loadingCircleColor = in.readString();
     this.loadingCircleSize = in.readInt();
+    this.imageWidth = in.readInt();
+    this.imageHeight = in.readInt();
   }
 
   public static final Creator<ScannerSettings> CREATOR = new Creator<ScannerSettings>() {
@@ -307,7 +333,9 @@ public class ScannerSettings implements Parcelable {
     BEEP_ON_SUCCESS("beepOnSuccess"),
     VIBRATE_ON_SUCCESS("vibrateOnSuccess"),
     LOADING_CIRCLE_COLOR("loadingCircleColor"),
-    LOADING_CIRCLE_SIZE("loadingCircleSize");
+    LOADING_CIRCLE_SIZE("loadingCircleSize"),
+    IMAGE_WIDTH("imageWidth"),
+    IMAGE_HEIGHT("imageHeight");
 
     private final String option;
 

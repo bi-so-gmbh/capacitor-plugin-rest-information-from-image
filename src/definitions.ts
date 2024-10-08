@@ -24,6 +24,8 @@ export interface ISettings {
   focusBackgroundColor?: string
   loadingCircleColor?: string
   loadingCircleSize?: number
+  imageWidth?: number
+  imageHeight?: number
 }
 
 /**
