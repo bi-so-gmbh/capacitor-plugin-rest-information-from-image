@@ -1,5 +1,6 @@
 package com.biso.capacitor.plugins.rest.information.from.image;
 
+import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.DEBUG;
 import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.LOADING_CIRCLE_COLOR;
 import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.LOADING_CIRCLE_SIZE;
 import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.IMAGE_HEIGHT;
@@ -48,6 +49,7 @@ public class ScannerSettings implements Parcelable {
   private int loadingCircleSize = 20;
   private int imageWidth = 720;
   private int imageHeight = 1280;
+  private boolean debug = false;
 
   public ScannerSettings(JSONObject settings) {
     Iterator<String> keys = settings.keys();
@@ -119,6 +121,9 @@ public class ScannerSettings implements Parcelable {
             break;
           case IMAGE_HEIGHT:
             imageHeight = settings.optInt(IMAGE_HEIGHT.value(), getImageHeight());
+            break;
+          case DEBUG:
+            debug = settings.optBoolean(DEBUG.value(), getDebug());
             break;
           default:
             Log.e("SETTINGS", "No known setting for " + key);
@@ -202,6 +207,10 @@ public class ScannerSettings implements Parcelable {
     return imageHeight;
   }
 
+  public boolean getDebug() {
+    return debug;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -228,7 +237,8 @@ public class ScannerSettings implements Parcelable {
         && getLoadingCircleColor().equals(that.getLoadingCircleColor())
         && getLoadingCircleSize() == that.getLoadingCircleSize()
         && getImageWidth() == that.getImageWidth()
-        && getImageHeight() == that.getImageHeight();
+        && getImageHeight() == that.getImageHeight()
+        && getDebug() == that.getDebug();
   }
 
   @Override
@@ -251,7 +261,8 @@ public class ScannerSettings implements Parcelable {
         getLoadingCircleColor(),
         getLoadingCircleSize(),
         getImageWidth(),
-        getImageHeight()
+        getImageHeight(),
+        getDebug()
     );
   }
 
@@ -280,6 +291,7 @@ public class ScannerSettings implements Parcelable {
     dest.writeInt(this.getLoadingCircleSize());
     dest.writeInt(this.getImageWidth());
     dest.writeInt(this.getImageHeight());
+    dest.writeByte(this.getDebug() ? (byte) 1 : (byte) 0);
   }
 
   protected ScannerSettings(Parcel in) {
@@ -301,6 +313,7 @@ public class ScannerSettings implements Parcelable {
     this.loadingCircleSize = in.readInt();
     this.imageWidth = in.readInt();
     this.imageHeight = in.readInt();
+    this.debug = in.readByte() != 0;
   }
 
   public static final Creator<ScannerSettings> CREATOR = new Creator<>() {
@@ -335,7 +348,8 @@ public class ScannerSettings implements Parcelable {
     LOADING_CIRCLE_COLOR("loadingCircleColor"),
     LOADING_CIRCLE_SIZE("loadingCircleSize"),
     IMAGE_WIDTH("imageWidth"),
-    IMAGE_HEIGHT("imageHeight");
+    IMAGE_HEIGHT("imageHeight"),
+    DEBUG("debug");
 
     private final String option;
 
