@@ -480,6 +480,20 @@
           "docs": "",
           "complexTypes": [],
           "type": "number | undefined"
+        },
+        {
+          "name": "imageWidth",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "imageHeight",
+          "tags": [],
+          "docs": "",
+          "complexTypes": [],
+          "type": "number | undefined"
         }
       ]
     }

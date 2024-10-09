@@ -17,6 +17,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
@@ -107,7 +108,7 @@ public class ImageCaptureListener extends OnImageCapturedCallback {
       httpURLConnection.disconnect();
     } catch (IOException e) {
       Log.e(LOG_KEY, e.getMessage());
-      if (e.getMessage().startsWith("Failed to connect to")) {
+      if (Objects.requireNonNull(e.getMessage()).startsWith("Failed to connect to")) {
         result.put(Keys.ERROR, ErrorMessages.CONNECTION_ERROR);
       } else {
         result.put(Keys.ERROR, e.getMessage());

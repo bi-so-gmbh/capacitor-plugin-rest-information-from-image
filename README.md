@@ -142,6 +142,8 @@ If the value is greater than 1 the detector will not be visible on the screen.
 | **`focusBackgroundColor`**     | <code>string</code>  |
 | **`loadingCircleColor`**       | <code>string</code>  |
 | **`loadingCircleSize`**        | <code>number</code>  |
+| **`imageWidth`**               | <code>number</code>  |
+| **`imageHeight`**              | <code>number</code>  |
 
 
 ### Type Aliases
@@ -156,8 +158,6 @@ If the value is greater than 1 the detector will not be visible on the screen.
 
 Construct a type with a set of properties K of type T
 
-<code>{
- [P in K]: T;
- }</code>
+<code>{ [P in K]: T; }</code>
 
 </docgen-api>

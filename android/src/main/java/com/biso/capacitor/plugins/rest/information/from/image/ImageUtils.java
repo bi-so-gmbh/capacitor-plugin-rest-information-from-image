@@ -35,17 +35,12 @@ public class ImageUtils {
   }
 
   public static String imageToBase64(Image image, int rotation) {
-    Bitmap bitmap;
-    switch (image.getFormat()) {
-      case ImageFormat.JPEG:
-        bitmap = rotateBitmap(jpegToBitmap(image), rotation);
-        break;
-      case 1:
-        bitmap = rotateBitmap(rgba8888ToBitmap(image), rotation);
-        break;
-      default:
+    Bitmap bitmap = switch (image.getFormat()) {
+      case ImageFormat.JPEG -> rotateBitmap(jpegToBitmap(image), rotation);
+      case 1 -> rotateBitmap(rgba8888ToBitmap(image), rotation);
+      default ->
         throw new IllegalStateException("Image format " + image.getFormat() + " not supported");
-    }
+    };
 
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     bitmap.compress(CompressFormat.JPEG, 75, byteArrayOutputStream);

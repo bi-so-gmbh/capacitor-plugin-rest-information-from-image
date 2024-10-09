@@ -36,7 +36,9 @@ const options = {
   drawFocusBackground: false,
   focusBackgroundColor: "#66FFFFFF",
   loadingCircleColor: "#888888",
-  loadingCircleSize: 30
+  loadingCircleSize: 30,
+  imageWidth: 1280,
+  imageHeight: 720
 };
 
 init();

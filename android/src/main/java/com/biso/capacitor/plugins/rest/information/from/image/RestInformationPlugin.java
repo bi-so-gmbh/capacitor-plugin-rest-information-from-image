@@ -64,6 +64,7 @@ public class RestInformationPlugin extends Plugin {
   }
 
   @PluginMethod
+  @SuppressWarnings("unused")
   public void scan(PluginCall call) {
     Intent intent = new Intent(context, CaptureActivity.class);
 
@@ -95,6 +96,7 @@ public class RestInformationPlugin extends Plugin {
   }
 
   @ActivityCallback
+  @SuppressWarnings("unused")
   private void onScanResult(PluginCall call, ActivityResult result) throws JSONException {
     if (call == null) {
       return;
@@ -126,7 +128,6 @@ public class RestInformationPlugin extends Plugin {
 
       if (scanResult.has(Keys.STATUS) && scanResult.getInt(Keys.STATUS) == 200) {
         call.resolve(scanResult);
-        return;
       } else {
         if (scanResult.has(Keys.ERROR)) {
           if (scanResult.has(Keys.STATUS)) {
@@ -134,7 +135,6 @@ public class RestInformationPlugin extends Plugin {
           } else {
             call.reject(scanResult.getString(Keys.ERROR));
           }
-          return;
         }
       }
     }
