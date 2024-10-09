@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.Size;
 import android.view.MotionEvent;
-import android.view.Surface;
 import android.view.View;
 import android.widget.ProgressBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -177,7 +176,7 @@ public class CaptureActivity extends AppCompatActivity {
         new Size(scannerSettings.getImageWidth(), scannerSettings.getImageHeight()),
         ResolutionStrategy.FALLBACK_RULE_CLOSEST_LOWER_THEN_HIGHER)).build();
 
-    imageCapture = new ImageCapture.Builder().setTargetRotation(Surface.ROTATION_90)
+    imageCapture = new ImageCapture.Builder()
       .setResolutionSelector(resolutionSelector).build();
     camera = cameraProvider.bindToLifecycle(this, cameraSelector, imageCapture, preview);
   }
