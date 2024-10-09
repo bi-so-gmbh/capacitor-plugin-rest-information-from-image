@@ -109,7 +109,7 @@ public class CaptureActivity extends AppCompatActivity {
         progressBar.setScaleY(scale);
         progressBar.setVisibility(View.VISIBLE);
         imageCapture.takePicture(executor,
-            new ImageCaptureListener(httpRequest, this::finishWithSuccess));
+            new ImageCaptureListener(httpRequest, this::finishWithSuccess, scannerSettings));
         cameraProvider.unbind(preview);
       }
     });

@@ -38,7 +38,8 @@ const options = {
   loadingCircleColor: "#888888",
   loadingCircleSize: 30,
   imageWidth: 1280,
-  imageHeight: 720
+  imageHeight: 720,
+  debug: false
 };
 
 init();

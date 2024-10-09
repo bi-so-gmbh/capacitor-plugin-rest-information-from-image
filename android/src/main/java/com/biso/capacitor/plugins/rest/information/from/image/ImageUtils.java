@@ -6,7 +6,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.media.Image;
 import android.util.Base64;
+import android.util.Log;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import android.graphics.Matrix;
 
@@ -34,7 +39,7 @@ public class ImageUtils {
     return BitmapFactory.decodeByteArray(clonedBytes, 0, clonedBytes.length);
   }
 
-  public static String imageToBase64(Image image, int rotation) {
+  public static ByteArrayOutputStream imageToByteArrayOutputStream(Image image, int rotation) {
     Bitmap bitmap = switch (image.getFormat()) {
       case ImageFormat.JPEG -> rotateBitmap(jpegToBitmap(image), rotation);
       case 1 -> rotateBitmap(rgba8888ToBitmap(image), rotation);
@@ -45,6 +50,10 @@ public class ImageUtils {
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     bitmap.compress(CompressFormat.JPEG, 75, byteArrayOutputStream);
 
+    return byteArrayOutputStream;
+  }
+
+  public static String imageToBase64(ByteArrayOutputStream byteArrayOutputStream) {
     return Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.DEFAULT);
   }
 
@@ -52,6 +61,18 @@ public class ImageUtils {
     Matrix mat = new Matrix();
     mat.postRotate(degrees);
     return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), mat, true);
+  }
+
+  public static void saveImageToDisk(ByteArrayOutputStream byteArrayOutputStream, String folder, String fileName) {
+    try {
+      File folderAsFile = new File(folder);
+      folderAsFile.mkdirs();
+      File imageAsFile = new File(folderAsFile, fileName);
+      OutputStream outputStream = new FileOutputStream(imageAsFile);
+      byteArrayOutputStream.writeTo(outputStream);
+    } catch (IOException e) {
+      Log.e("SaveToDisk", e.getMessage(), e);
+    }
   }
 
   private ImageUtils() {

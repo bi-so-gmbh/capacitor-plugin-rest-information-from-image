@@ -1,8 +1,11 @@
 package com.biso.capacitor.plugins.rest.information.from.image;
 
-import android.annotation.SuppressLint;
+import static com.biso.capacitor.plugins.rest.information.from.image.ImageUtils.imageToByteArrayOutputStream;
+import static com.biso.capacitor.plugins.rest.information.from.image.ImageUtils.saveImageToDisk;
+
 import android.content.Intent;
 import android.media.Image;
+import android.os.Environment;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.camera.core.ImageCapture.OnImageCapturedCallback;
@@ -10,12 +13,14 @@ import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.ImageProxy;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -28,24 +33,31 @@ public class ImageCaptureListener extends OnImageCapturedCallback {
   private static final String LOG_KEY = "ImageCaptureListener";
   private final RestDataListener restDataListener;
   private final HttpRequest httpRequest;
+  private final ScannerSettings scannerSettings;
 
-  public ImageCaptureListener(HttpRequest httpRequest, RestDataListener restDataListener) {
+  public ImageCaptureListener(HttpRequest httpRequest, RestDataListener restDataListener, ScannerSettings scannerSettings) {
     super();
     this.httpRequest = httpRequest;
     this.restDataListener = restDataListener;
+    this.scannerSettings = scannerSettings;
   }
 
   @Override
   public void onCaptureSuccess(@NotNull ImageProxy imageProxy) {
-    @SuppressLint("UnsafeOptInUsageError")
     Image image = imageProxy.getImage();
     if (image == null) {
       imageProxy.close();
       return;
     }
-    String base64Image = ImageUtils.imageToBase64(image,
-        imageProxy.getImageInfo().getRotationDegrees());
-    image.close();
+    ByteArrayOutputStream byteArrayOutputStream = imageToByteArrayOutputStream(image, imageProxy.getImageInfo().getRotationDegrees());
+    String base64Image = ImageUtils.imageToBase64(byteArrayOutputStream);
+
+    if (scannerSettings.getDebug()) {
+      String folder = Environment.getExternalStorageDirectory().toString() + "/DCIM/Test";
+      String fileName = Instant.now().getEpochSecond() + ".jpg";
+      saveImageToDisk(byteArrayOutputStream, folder, fileName);
+    }
+
     imageProxy.close();
 
     Intent data = new Intent();
