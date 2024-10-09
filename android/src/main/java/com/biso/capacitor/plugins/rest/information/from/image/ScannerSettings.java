@@ -303,7 +303,7 @@ public class ScannerSettings implements Parcelable {
     this.imageHeight = in.readInt();
   }
 
-  public static final Creator<ScannerSettings> CREATOR = new Creator<ScannerSettings>() {
+  public static final Creator<ScannerSettings> CREATOR = new Creator<>() {
     @Override
     public ScannerSettings createFromParcel(Parcel source) {
       return new ScannerSettings(source);

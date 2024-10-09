@@ -17,14 +17,16 @@ import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.widget.ProgressBar;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts.RequestPermission;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.camera.core.AspectRatio;
 import androidx.camera.core.Camera;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.Preview;
 import androidx.camera.core.Preview.SurfaceProvider;
+import androidx.camera.core.resolutionselector.AspectRatioStrategy;
+import androidx.camera.core.resolutionselector.ResolutionSelector;
+import androidx.camera.core.resolutionselector.ResolutionStrategy;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams;
@@ -47,15 +49,6 @@ public class CaptureActivity extends AppCompatActivity {
   private Preview preview;
   private boolean readyToTakePicture = true;
   private ScannerSettings scannerSettings;
-
-  private final ActivityResultLauncher<String> requestPermissionLauncher =
-      registerForActivityResult(new RequestPermission(), isGranted -> {
-        if (Boolean.TRUE.equals(isGranted)) {
-          startCamera();
-        } else {
-          finishWithError(ErrorMessages.NO_CAMERA_PERMISSION);
-        }
-      });
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -92,10 +85,10 @@ public class CaptureActivity extends AppCompatActivity {
     CameraOverlay cameraOverlay = new CameraOverlay(this, scannerSettings);
 
     binding.topLayout.addView(cameraOverlay);
-    if (VERSION.SDK_INT >= VERSION_CODES.M && checkSelfPermission(permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+    if (checkSelfPermission(permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
       startCamera();
     } else {
-      requestPermissionLauncher.launch(permission.CAMERA);
+      finishWithError(ErrorMessages.NO_CAMERA_PERMISSION);
     }
 
     ProgressBar progressBar = new ProgressBar(CaptureActivity.this);
@@ -173,16 +166,19 @@ public class CaptureActivity extends AppCompatActivity {
   private void bindPreview(ProcessCameraProvider cameraProvider, SurfaceProvider surfaceProvider) {
     preview = new Preview.Builder().build();
 
-    CameraSelector cameraSelector = new CameraSelector.Builder()
-        .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-        .build();
+    CameraSelector cameraSelector = new CameraSelector.Builder().requireLensFacing(
+      CameraSelector.LENS_FACING_BACK).build();
 
     preview.setSurfaceProvider(surfaceProvider);
 
-    imageCapture = new ImageCapture.Builder()
-      .setTargetRotation(Surface.ROTATION_90)
-      .setTargetResolution(new Size(scannerSettings.getImageWidth(), scannerSettings.getImageHeight()))
-        .build();
+    ResolutionSelector resolutionSelector = new ResolutionSelector.Builder().setAspectRatioStrategy(
+        new AspectRatioStrategy(AspectRatio.RATIO_16_9, AspectRatioStrategy.FALLBACK_RULE_AUTO))
+      .setResolutionStrategy(new ResolutionStrategy(
+        new Size(scannerSettings.getImageWidth(), scannerSettings.getImageHeight()),
+        ResolutionStrategy.FALLBACK_RULE_CLOSEST_LOWER_THEN_HIGHER)).build();
+
+    imageCapture = new ImageCapture.Builder().setTargetRotation(Surface.ROTATION_90)
+      .setResolutionSelector(resolutionSelector).build();
     camera = cameraProvider.bindToLifecycle(this, cameraSelector, imageCapture, preview);
   }
 }
