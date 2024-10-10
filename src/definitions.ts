@@ -1,5 +1,5 @@
 export interface RestInformationPlugin {
-  scan(scanCall: IScanCall): Promise<Object>;
+  scan(scanCall: IScanCall): Promise<object>;
 }
 
 /**
