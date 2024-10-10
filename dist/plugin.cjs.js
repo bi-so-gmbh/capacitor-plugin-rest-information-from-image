@@ -5,12 +5,12 @@ Object.defineProperty(exports, '__esModule', { value: true });
 var core = require('@capacitor/core');
 
 const RestInformation = core.registerPlugin('RestInformation', {
-    web: () => Promise.resolve().then(function () { return web; }).then(m => new m.RestInformationWeb()),
+    web: () => Promise.resolve().then(function () { return web; }).then((m) => new m.RestInformationWeb()),
 });
 
 class RestInformationWeb extends core.WebPlugin {
     async scan(_scanCall) {
-        return Promise.reject(new Error("PLATFORM_NOT_SUPPORTED"));
+        return Promise.reject(new Error('PLATFORM_NOT_SUPPORTED'));
     }
 }
 

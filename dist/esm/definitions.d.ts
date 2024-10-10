@@ -1,5 +1,5 @@
 export interface RestInformationPlugin {
-    scan(scanCall: IScanCall): Promise<Object>;
+    scan(scanCall: IScanCall): Promise<object>;
 }
 /**
  * All settings that can be passed to the plugin. The `detectorSize` value must be between
@@ -23,6 +23,8 @@ export interface ISettings {
     focusBackgroundColor?: string;
     loadingCircleColor?: string;
     loadingCircleSize?: number;
+    imageWidth?: number;
+    imageHeight?: number;
 }
 /**
  * Data used for the http request. Url, headers and body are required, though both header

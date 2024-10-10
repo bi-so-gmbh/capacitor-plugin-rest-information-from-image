@@ -1,5 +1,5 @@
 export interface RestInformationPlugin {
-  scan(scanCall: IScanCall): Promise<Object>;
+  scan(scanCall: IScanCall): Promise<object>;
 }
 
 /**
@@ -9,23 +9,23 @@ export interface RestInformationPlugin {
  * If the value is greater than 1 the detector will not be visible on the screen.
  */
 export interface ISettings {
-  beepOnSuccess?: boolean
-  vibrateOnSuccess?: boolean
-  detectorSize?: number
-  detectorAspectRatio?: string
-  drawFocusRect?: boolean
-  focusRectColor?: string
-  focusRectBorderRadius?: number
-  focusRectBorderThickness?: number
-  drawFocusLine?: boolean
-  focusLineColor?: string
-  focusLineThickness?: number
-  drawFocusBackground?: boolean
-  focusBackgroundColor?: string
-  loadingCircleColor?: string
-  loadingCircleSize?: number
-  imageWidth?: number
-  imageHeight?: number
+  beepOnSuccess?: boolean;
+  vibrateOnSuccess?: boolean;
+  detectorSize?: number;
+  detectorAspectRatio?: string;
+  drawFocusRect?: boolean;
+  focusRectColor?: string;
+  focusRectBorderRadius?: number;
+  focusRectBorderThickness?: number;
+  drawFocusLine?: boolean;
+  focusLineColor?: string;
+  focusLineThickness?: number;
+  drawFocusBackground?: boolean;
+  focusBackgroundColor?: string;
+  loadingCircleColor?: string;
+  loadingCircleSize?: number;
+  imageWidth?: number;
+  imageHeight?: number;
 }
 
 /**
@@ -34,11 +34,11 @@ export interface ISettings {
  * image type will be named when they are added to the body.
  */
 export interface IRequest {
-  url: string,
-  headers: Record<string, string>,
-  body: Record<string, any>,
-  base64Key?: string,
-  imageTypeKey?: string
+  url: string;
+  headers: Record<string, string>;
+  body: Record<string, any>;
+  base64Key?: string;
+  imageTypeKey?: string;
 }
 
 /**
@@ -46,6 +46,6 @@ export interface IRequest {
  * things like the url, settings can be left empty, which will use the default settings.
  */
 export interface IScanCall {
-  request: IRequest,
-  settings?: ISettings
+  request: IRequest;
+  settings?: ISettings;
 }
