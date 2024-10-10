@@ -17,25 +17,25 @@
  * under the License.
  */
 
-import { Capacitor } from "@capacitor/core";
-import { RestInformation } from "capacitor-plugin-rest-information-from-image";
-import data from "../data.json";
+import { Capacitor } from '@capacitor/core';
+import { RestInformation } from 'capacitor-plugin-rest-information-from-image';
+import data from '../data.json';
 
 const options = {
   beepOnSuccess: false,
   vibrateOnSuccess: false,
   detectorSize: 0.9,
-  detectorAspectRatio: "5:1",
+  detectorAspectRatio: '5:1',
   drawFocusRect: true,
-  focusRectColor: "#FFFFFF",
+  focusRectColor: '#FFFFFF',
   focusRectBorderRadius: 10,
   focusRectBorderThickness: 5,
   drawFocusLine: false,
-  focusLineColor: "#ff2d37",
+  focusLineColor: '#ff2d37',
   focusLineThickness: 2,
   drawFocusBackground: false,
-  focusBackgroundColor: "#66FFFFFF",
-  loadingCircleColor: "#888888",
+  focusBackgroundColor: '#66FFFFFF',
+  loadingCircleColor: '#888888',
   loadingCircleSize: 30,
   imageWidth: 1280,
   imageHeight: 720,
@@ -45,25 +45,25 @@ const options = {
 init();
 
 function onSuccess(result) {
-  const node = document.createElement("div");
-  node.className = "log_item";
+  const node = document.createElement('div');
+  node.className = 'log_item';
   node.textContent = `${JSON.stringify(result, undefined, 2)}`;
-  document.getElementById("output").prepend(node);
+  document.getElementById('output').prepend(node);
 }
 
 function onFail(result) {
-  const node = document.createElement("div");
-  node.className = "log_item";
+  const node = document.createElement('div');
+  node.className = 'log_item';
   node.textContent = `${result}`;
-  document.getElementById("output").prepend(node);
+  document.getElementById('output').prepend(node);
 }
 
 async function scan() {
-  console.log("scan button clicked");
+  console.log('scan button clicked');
   for (const key in options) {
     const element = document.getElementById(key);
     if (element) {
-      if (element.tagName === "INPUT" && element.type === "checkbox") {
+      if (element.tagName === 'INPUT' && element.type === 'checkbox') {
         options[key] = element.checked;
       } else {
         options[key] = element.value;
@@ -76,7 +76,7 @@ async function scan() {
       request: data,
       settings: options,
     });
-    console.log("result", result);
+    console.log('result', result);
     onSuccess(result);
   } catch (error) {
     console.log(error);
@@ -85,7 +85,7 @@ async function scan() {
 }
 
 function clearLog() {
-  let logItems = document.getElementsByClassName("log_item");
+  let logItems = document.getElementsByClassName('log_item');
   logItems = [...logItems];
   for (const item of logItems) {
     item.parentNode.removeChild(item);
@@ -93,18 +93,18 @@ function clearLog() {
 }
 
 function init() {
-  console.log("Running capacitor-" + Capacitor.getPlatform());
-  document.getElementById("scan").onclick = scan;
-  document.getElementById("clearLog").onclick = clearLog;
+  console.log('Running capacitor-' + Capacitor.getPlatform());
+  document.getElementById('scan').onclick = scan;
+  document.getElementById('clearLog').onclick = clearLog;
 
   for (const key in options) {
     const element = document.getElementById(key);
     if (element) {
-      if (element.tagName === "INPUT" && element.type === "range") {
-        element.addEventListener("input", updateTextInput);
+      if (element.tagName === 'INPUT' && element.type === 'range') {
+        element.addEventListener('input', updateTextInput);
         element.nextElementSibling.value = options[key];
         element.value = options[key];
-      } else if (element.tagName === "INPUT" && element.type === "checkbox") {
+      } else if (element.tagName === 'INPUT' && element.type === 'checkbox') {
         element.checked = options[key];
       } else {
         element.value = options[key];
