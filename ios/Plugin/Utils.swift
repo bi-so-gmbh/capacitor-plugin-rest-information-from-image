@@ -111,7 +111,7 @@ class Utils {
     ) -> UIImage.Orientation {
         var deviceOrientation = UIDevice.current.orientation
         if deviceOrientation == .faceDown || deviceOrientation == .faceUp
-                || deviceOrientation == .unknown {
+            || deviceOrientation == .unknown {
             deviceOrientation = currentUIOrientation()
         }
         switch deviceOrientation {
