@@ -1,145 +1,284 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
-  <meta name="format-detection" content="telephone=no">
-  <meta name="msapplication-tap-highlight" content="no">
-  <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
-  <meta name="color-scheme" content="light dark">
-  <link rel="stylesheet" href="./css/index.css">
-  <title>Rest Information From Image Test</title>
-</head>
-<body>
-<div class="container px-4 py-4">
-  <div class="row gy-4">
-    <div class="col-12">
-      <p>Press the button below to open the camera and take a picture. Picture is then sent to
-        configured endpoint and result returned</p>
-      <button id="scan" class="btn btn-primary btn-lg">Scan</button>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;"
+    />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta
+      name="viewport"
+      content="initial-scale=1, width=device-width, viewport-fit=cover"
+    />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="stylesheet" href="./css/index.css" />
+    <title>Rest Information From Image Test</title>
+  </head>
+  <body>
+    <div class="container px-4 py-4">
+      <div class="row gy-4">
+        <div class="col-12">
+          <p>
+            Press the button below to open the camera and take a picture.
+            Picture is then sent to configured endpoint and result returned
+          </p>
+          <button id="scan" class="btn btn-primary btn-lg">Scan</button>
+        </div>
+        <div class="col-12">
+          <form>
+            <h4>Scan options</h4>
+            <fieldset>
+              <legend>General:</legend>
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="beepOnSuccess"
+                  name="beepOnSuccess"
+                  value="true"
+                  aria-checked="true"
+                />
+                <label class="form-check-label" for="beepOnSuccess"
+                  >Beep on success</label
+                >
+              </div>
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="vibrateOnSuccess"
+                  name="vibrateOnSuccess"
+                  value="true"
+                  aria-checked="true"
+                />
+                <label class="form-check-label" for="vibrateOnSuccess"
+                  >Vibrate on success</label
+                >
+              </div>
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="debug"
+                  name="debug"
+                  value="true"
+                  aria-checked="true"
+                />
+                <label class="form-check-label" for="debug">Debug</label>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Image:</legend>
+              <div class="form-number">
+                <label class="form-number-label" for="imageWidth"
+                  >Width (px)</label
+                >
+                <input
+                  class="form-number-input"
+                  type="number"
+                  id="imageWidth"
+                  name="imageWidth"
+                />
+              </div>
+              <div class="form-number">
+                <label class="form-number-label" for="imageHeight"
+                  >Height (px)</label
+                >
+                <input
+                  class="form-number-input"
+                  type="number"
+                  id="imageHeight"
+                  name="imageHeight"
+                />
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Scan Area:</legend>
+              <div class="form-range">
+                <label class="form-range-label" for="detectorSize">Size</label>
+                <input
+                  class="form-range-input"
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  id="detectorSize"
+                  name="detectorSize"
+                />
+                <output>0.5</output>
+              </div>
+              <div class="form-text">
+                <label class="form-text-label" for="detectorAspectRatio"
+                  >Aspect Ratio</label
+                >
+                <input
+                  class="form-text-input"
+                  type="text"
+                  id="detectorAspectRatio"
+                  name="detectorAspectRatio"
+                />
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Rectangle Outline:</legend>
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="drawFocusRect"
+                  name="drawFocusRect"
+                  value="true"
+                  aria-checked="true"
+                />
+                <label class="form-check-label" for="drawFocusRect">Draw</label>
+              </div>
+              <div class="form-text">
+                <label class="form-text-label" for="focusRectColor"
+                  >Color</label
+                >
+                <input
+                  class="form-text-input"
+                  type="text"
+                  id="focusRectColor"
+                  name="focusRectColor"
+                />
+              </div>
+              <div class="form-number">
+                <label class="form-number-label" for="focusRectBorderThickness"
+                  >Thickness</label
+                >
+                <input
+                  class="form-number-input"
+                  type="number"
+                  id="focusRectBorderThickness"
+                  name="focusRectBorderThickness"
+                />
+              </div>
+              <div class="form-number">
+                <label class="form-number-label" for="focusRectBorderRadius"
+                  >Radius</label
+                >
+                <input
+                  class="form-number-input"
+                  type="number"
+                  id="focusRectBorderRadius"
+                  name="focusRectBorderRadius"
+                />
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Center Line:</legend>
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="drawFocusLine"
+                  name="drawFocusLine"
+                  value="true"
+                  aria-checked="true"
+                />
+                <label class="form-check-label" for="drawFocusLine">Draw</label>
+              </div>
+              <div class="form-text">
+                <label class="form-text-label" for="focusLineColor"
+                  >Color</label
+                >
+                <input
+                  class="form-text-input"
+                  type="text"
+                  id="focusLineColor"
+                  name="focusLineColor"
+                />
+              </div>
+              <div class="form-number">
+                <label class="form-number-label" for="focusLineThickness"
+                  >Thickness</label
+                >
+                <input
+                  class="form-number-input"
+                  type="number"
+                  id="focusLineThickness"
+                  name="focusLineThickness"
+                />
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Background:</legend>
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="drawFocusBackground"
+                  name="drawFocusBackground"
+                  value="true"
+                  aria-checked="true"
+                />
+                <label class="form-check-label" for="drawFocusBackground"
+                  >Draw</label
+                >
+              </div>
+              <div class="form-text">
+                <label class="form-text-label" for="focusBackgroundColor"
+                  >Color</label
+                >
+                <input
+                  class="form-text-input"
+                  type="text"
+                  id="focusBackgroundColor"
+                  name="focusBackgroundColor"
+                />
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Loading Circle:</legend>
+              <div class="form-text">
+                <label class="form-text-label" for="loadingCircleColor"
+                  >Color</label
+                >
+                <input
+                  class="form-text-input"
+                  type="text"
+                  id="loadingCircleColor"
+                  name="loadingCircleColor"
+                />
+              </div>
+              <div class="form-number">
+                <label class="form-number-label" for="loadingCircleSize"
+                  >Size</label
+                >
+                <input
+                  class="form-number-input"
+                  type="number"
+                  id="loadingCircleSize"
+                  name="loadingCircleSize"
+                />
+              </div>
+            </fieldset>
+          </form>
+        </div>
+        <div class="col-12">
+          <h4>
+            Log output
+            <button
+              id="clearLog"
+              class="btn btn-primary btn-lg"
+              style="float: right"
+            >
+              Clear Log
+            </button>
+          </h4>
+          <pre id="output"></pre>
+        </div>
+      </div>
     </div>
-    <div class="col-12">
-      <form>
-        <h4>Scan options</h4>
-        <fieldset>
-          <legend>General:</legend>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="beepOnSuccess"
-                   name="beepOnSuccess" value="true" aria-checked="true">
-            <label class="form-check-label" for="beepOnSuccess">Beep on success</label>
-          </div>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="vibrateOnSuccess"
-                   name="vibrateOnSuccess" value="true" aria-checked="true">
-            <label class="form-check-label" for="vibrateOnSuccess">Vibrate on success</label>
-          </div>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="debug"
-                   name="debug" value="true" aria-checked="true">
-            <label class="form-check-label" for="debug">Debug</label>
-          </div>
-        </fieldset>
-        <fieldset>
-          <legend>Image:</legend>
-          <div class="form-number">
-            <label class="form-number-label" for="imageWidth">Width (px)</label>
-            <input class="form-number-input" type="number" id="imageWidth" name="imageWidth">
-          </div>
-          <div class="form-number">
-            <label class="form-number-label" for="imageHeight">Height (px)</label>
-            <input class="form-number-input" type="number" id="imageHeight" name="imageHeight">
-          </div>
-        </fieldset>
-        <fieldset>
-          <legend>Scan Area:</legend>
-          <div class="form-range">
-            <label class="form-range-label" for="detectorSize">Size</label>
-            <input class="form-range-input" type="range" min="0" max="1" step="0.1"
-                   id="detectorSize" name="detectorSize">
-            <output>0.5</output>
-          </div>
-          <div class="form-text">
-            <label class="form-text-label" for="detectorAspectRatio">Aspect Ratio</label>
-            <input class="form-text-input" type="text" id="detectorAspectRatio"
-                   name="detectorAspectRatio">
-          </div>
-        </fieldset>
-        <fieldset>
-          <legend>Rectangle Outline:</legend>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="drawFocusRect"
-                   name="drawFocusRect" value="true" aria-checked="true">
-            <label class="form-check-label" for="drawFocusRect">Draw</label>
-          </div>
-          <div class="form-text">
-            <label class="form-text-label" for="focusRectColor">Color</label>
-            <input class="form-text-input" type="text" id="focusRectColor" name="focusRectColor">
-          </div>
-          <div class="form-number">
-            <label class="form-number-label" for="focusRectBorderThickness">Thickness</label>
-            <input class="form-number-input" type="number" id="focusRectBorderThickness"
-                   name="focusRectBorderThickness">
-          </div>
-          <div class="form-number">
-            <label class="form-number-label" for="focusRectBorderRadius">Radius</label>
-            <input class="form-number-input" type="number" id="focusRectBorderRadius"
-                   name="focusRectBorderRadius">
-          </div>
-        </fieldset>
-        <fieldset>
-          <legend>Center Line:</legend>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="drawFocusLine"
-                   name="drawFocusLine" value="true" aria-checked="true">
-            <label class="form-check-label" for="drawFocusLine">Draw</label>
-          </div>
-          <div class="form-text">
-            <label class="form-text-label" for="focusLineColor">Color</label>
-            <input class="form-text-input" type="text" id="focusLineColor" name="focusLineColor">
-          </div>
-          <div class="form-number">
-            <label class="form-number-label" for="focusLineThickness">Thickness</label>
-            <input class="form-number-input" type="number" id="focusLineThickness"
-                   name="focusLineThickness">
-          </div>
-        </fieldset>
-        <fieldset>
-          <legend>Background:</legend>
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" role="switch" id="drawFocusBackground"
-                   name="drawFocusBackground" value="true" aria-checked="true">
-            <label class="form-check-label" for="drawFocusBackground">Draw</label>
-          </div>
-          <div class="form-text">
-            <label class="form-text-label" for="focusBackgroundColor">Color</label>
-            <input class="form-text-input" type="text" id="focusBackgroundColor"
-                   name="focusBackgroundColor">
-          </div>
-        </fieldset>
-        <fieldset>
-          <legend>Loading Circle:</legend>
-          <div class="form-text">
-            <label class="form-text-label" for="loadingCircleColor">Color</label>
-            <input class="form-text-input" type="text" id="loadingCircleColor"
-                   name="loadingCircleColor">
-          </div>
-          <div class="form-number">
-            <label class="form-number-label" for="loadingCircleSize">Size</label>
-            <input class="form-number-input" type="number" id="loadingCircleSize"
-                   name="loadingCircleSize">
-          </div>
-        </fieldset>
-      </form>
-    </div>
-    <div class="col-12">
-      <h4>Log output
-        <button id="clearLog" class="btn btn-primary btn-lg" style="float: right;">Clear Log</button>
-      </h4>
-      <pre id="output"></pre>
-    </div>
-  </div>
-</div>
-<script src="./js/index.js" type="module"></script>
-</body>
+    <script src="./js/index.js" type="module"></script>
+  </body>
 </html>

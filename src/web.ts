@@ -1,6 +1,6 @@
-import { WebPlugin } from '@capacitor/core';
+import { WebPlugin } from "@capacitor/core";
 
-import type { RestInformationPlugin, IScanCall } from './definitions';
+import type { RestInformationPlugin, IScanCall } from "./definitions";
 
 export class RestInformationWeb
   extends WebPlugin

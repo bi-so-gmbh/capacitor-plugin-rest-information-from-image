@@ -4,8 +4,8 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 var core = require('@capacitor/core');
 
-const RestInformation = core.registerPlugin('RestInformation', {
-    web: () => Promise.resolve().then(function () { return web; }).then(m => new m.RestInformationWeb()),
+const RestInformation = core.registerPlugin("RestInformation", {
+    web: () => Promise.resolve().then(function () { return web; }).then((m) => new m.RestInformationWeb()),
 });
 
 class RestInformationWeb extends core.WebPlugin {
