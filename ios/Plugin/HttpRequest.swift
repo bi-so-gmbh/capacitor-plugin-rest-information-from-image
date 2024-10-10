@@ -7,27 +7,27 @@ class HttpRequest: CustomDebugStringConvertible {
                 des += "\n\t\(propName): \(child.value)"
             }
         }
-        
+
         return des + "\n}"
     }
-    
-    public private(set) var url: URL
-    public private(set) var headers: [String:String]
-    public private(set) var body: [String:Any]
-    public private(set) var base64Key: String = "fileBase64"
-    public private(set) var imageTypeKey: String = "imageType"
-    
-    init?(request:[String:Any]) {
+
+    private(set) var url: URL
+    private(set) var headers: [String: String]
+    private(set) var body: [String: Any]
+    private(set) var base64Key: String = "fileBase64"
+    private(set) var imageTypeKey: String = "imageType"
+
+    init?(request: [String: Any]) {
         guard let urlString = request["url"] as? String else {return nil}
         guard let url = URL(string: urlString) else {return nil}
         self.url = url
-        
-        if let headers = request["headers"] as? [String:String] {
+
+        if let headers = request["headers"] as? [String: String] {
             self.headers = headers
         } else {
             self.headers = [:]
         }
-        if let body = request["body"] as? [String:Any] {
+        if let body = request["body"] as? [String: Any] {
             self.body = body
         } else {
             self.body = [:]
