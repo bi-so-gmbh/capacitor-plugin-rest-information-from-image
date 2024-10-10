@@ -3,27 +3,27 @@ import UIKit
 
 class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
     let httpRequest: HttpRequest
-    let restDataListener : RestDataListener
+    let restDataListener: RestDataListener
     let captureSession: AVCaptureSession
-    var runningTask : Task<Void, Never>?
-    
+    var runningTask: Task<Void, Never>?
+
     init(httpRequest: HttpRequest, restDataListener: RestDataListener, captureSession: AVCaptureSession) {
         self.httpRequest = httpRequest
         self.restDataListener = restDataListener
         self.captureSession = captureSession
     }
-    
+
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         captureSession.stopRunning()
         if error != nil {
-            self.restDataListener.onRestData([Keys.ERROR:ErrorMessages.CAMERA_ERROR])
+            self.restDataListener.onRestData([Keys.ERROR: ErrorMessages.CAMERA_ERROR])
             return
         }
         guard let imageData = photo.fileDataRepresentation() else {
-            self.restDataListener.onRestData([Keys.ERROR:ErrorMessages.CAMERA_ERROR])
+            self.restDataListener.onRestData([Keys.ERROR: ErrorMessages.CAMERA_ERROR])
             return
         }
-        
+
         var image = UIImage(data: imageData)
         image = Utils.rotateImage(image: image!, orientation: Utils.imageOrientation(fromDevicePosition: .back))
         if let base64 = image?.jpegData(compressionQuality: 0.75)?.base64EncodedString() {
@@ -32,31 +32,31 @@ class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
                 self.restDataListener.onRestData(result)
             }
         } else {
-            self.restDataListener.onRestData([Keys.ERROR:ErrorMessages.CAMERA_ERROR])
+            self.restDataListener.onRestData([Keys.ERROR: ErrorMessages.CAMERA_ERROR])
         }
     }
-    
-    private func doPOSTRequest(base64Image:String) async -> [String:Any] {
+
+    private func doPOSTRequest(base64Image: String) async -> [String: Any] {
         var request = URLRequest(url: httpRequest.url)
         request.httpMethod = "POST"
         for (key, value) in httpRequest.headers {
             request.setValue(value, forHTTPHeaderField: key)
         }
-        
+
         var body = httpRequest.body
         body[httpRequest.base64Key] = base64Image
         body[httpRequest.imageTypeKey] = "jpeg"
-        
+
         guard let bodyData = try? JSONSerialization.data(
             withJSONObject: body,
             options: []
         ) else {
-            return [Keys.ERROR:ErrorMessages.JSON_ERROR]
+            return [Keys.ERROR: ErrorMessages.JSON_ERROR]
         }
         request.httpBody = bodyData
-        
-        var result:[String:Any] = [:]
-        
+
+        var result: [String: Any] = [:]
+
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
             guard let httpResponse = response as? HTTPURLResponse,
@@ -67,37 +67,37 @@ class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
             result = responseToJson(data: data)
             result[Keys.STATUS] = 200
         } catch let error {
-            if (error.localizedDescription == "cancelled") {
+            if error.localizedDescription == "cancelled" {
                 result[Keys.ERROR] = ErrorMessages.CANCELLED
             } else {
                 result[Keys.ERROR] = error.localizedDescription
                 print("Post Request Error: \(error.localizedDescription)")
             }
         }
-        
+
         return result
     }
-    
-    private func responseToJson(data:Data?) -> [String:Any] {
+
+    private func responseToJson(data: Data?) -> [String: Any] {
         guard let responseData = data else {
             print("nil Data received from the server")
             return [Keys.ERROR: ErrorMessages.EMPTY_RESPONSE]
         }
-        if (responseData.isEmpty) {
+        if responseData.isEmpty {
             print("nil Data received from the server")
             return [Keys.ERROR: ErrorMessages.EMPTY_RESPONSE]
         }
-        
+
         do {
             if let jsonResponse = try JSONSerialization.jsonObject(with: responseData, options: .mutableContainers) as? [String: Any] {
                 return jsonResponse
             } else {
                 print("data maybe corrupted or in wrong format")
-                return [Keys.ERROR:ErrorMessages.JSON_ERROR]
+                return [Keys.ERROR: ErrorMessages.JSON_ERROR]
             }
         } catch let error {
             print(error.localizedDescription)
-            return [Keys.ERROR:ErrorMessages.JSON_ERROR]
+            return [Keys.ERROR: ErrorMessages.JSON_ERROR]
         }
     }
 }

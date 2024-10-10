@@ -9,7 +9,7 @@ protocol CameraViewControllerDelegate: NSObjectProtocol {
 
 class CameraViewController: UIViewController, RestDataListener {
     weak var delegate: CameraViewControllerDelegate?
-    var imageCaptureListener : ImageCaptureListener?
+    var imageCaptureListener: ImageCaptureListener?
     private let captureSession = AVCaptureSession()
     private let sessionQueue = DispatchQueue(label: "sessionQueue")
     private var previewLayer = AVCaptureVideoPreviewLayer()
@@ -20,26 +20,26 @@ class CameraViewController: UIViewController, RestDataListener {
     private var finishedAlready: Bool = false // ensure we only actually finish once
     private var spinner: UIActivityIndicatorView?
     private let stillImageOutput = AVCapturePhotoOutput()
-    
+
     func onRestData(_ data: [String: Any]) {
         finishWithResult(data)
     }
-    
+
     init(settings: ScannerSettings, request: HttpRequest) {
         self.settings = settings
         self.httpRequest = request
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder: NSCoder) {
         self.settings = ScannerSettings()
         self.httpRequest = HttpRequest(request: [:])!
         super.init(coder: coder)
     }
-    
+
     override func viewDidLoad() {
         cameraOverlay = CameraOverlay(settings: settings, parentView: view)
-        
+
         if AVCaptureDevice.authorizationStatus(for: .video) == .authorized {
             setupCaptureSession()
             setupUI()
@@ -58,29 +58,29 @@ class CameraViewController: UIViewController, RestDataListener {
             })
         }
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         startSession()
         // slight delay so the camera has time to load before we show the modal
-        while (!captureSession.isRunning) {
+        while !captureSession.isRunning {
             usleep(100)
         }
         usleep(150000)
     }
-    
+
     override func viewDidDisappear(_ animated: Bool) {
         imageCaptureListener?.runningTask?.cancel()
         stopSession()
     }
-    
+
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         setOrientation()
     }
-    
+
     private func setOrientation() {
         previewLayer.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        
+
         switch UIDevice.current.orientation {
         case UIDeviceOrientation.portraitUpsideDown:
             previewLayer.connection?.videoOrientation = .portraitUpsideDown
@@ -94,63 +94,63 @@ class CameraViewController: UIViewController, RestDataListener {
             break
         }
     }
-    
+
     private func setupCaptureSession() {
         guard let videoDevice = captureDevice() else {
             finishWithError(ErrorMessages.NO_CAMERA)
             return
-            
+
         }
         guard let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice) else {
             finishWithError(ErrorMessages.NO_CAMERA)
             return
         }
         guard captureSession.canAddInput(videoDeviceInput) else { return }
-        
+
         captureSession.addInput(videoDeviceInput)
-        
+
         previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         previewLayer.backgroundColor = UIColor.black.cgColor
         previewLayer.frame = view.bounds
         previewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
-        
+
         previewLayer.connection?.videoOrientation = .portrait
-        
+
         guard captureSession.canAddOutput(stillImageOutput) else {
             finishWithError(ErrorMessages.CAMERA_ERROR)
             return
         }
         captureSession.addOutput(stillImageOutput)
-        
+
     }
-    
+
     private func setupUI() {
         view.layer.addSublayer(previewLayer)
         cameraOverlay.setPreviewLayer(previewLayer)
         view.bringSubviewToFront(cameraOverlay)
 
         torchButton = createTorchButton()
-        let gesture = UITapGestureRecognizer(target: self, action:  #selector (self.onTouch (_:)))
+        let gesture = UITapGestureRecognizer(target: self, action: #selector (self.onTouch (_:)))
         view.addGestureRecognizer(gesture)
-        
+
         spinner = UIActivityIndicatorView(style: .large)
         spinner!.translatesAutoresizingMaskIntoConstraints = false
         spinner!.startAnimating()
         spinner!.isHidden = true
         spinner!.color = settings.loadingCircleUIColor
         view.addSubview(spinner!)
-        
+
         spinner!.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         spinner!.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
     }
-    
-    @objc func onTouch(_ sender:UITapGestureRecognizer){
+
+    @objc func onTouch(_ sender: UITapGestureRecognizer) {
         spinner!.isHidden = false
-        let photoSettings : AVCapturePhotoSettings = AVCapturePhotoSettings(format: [AVVideoCodecKey:AVVideoCodecType.jpeg])
+        let photoSettings: AVCapturePhotoSettings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
         imageCaptureListener = ImageCaptureListener(httpRequest: httpRequest, restDataListener: self, captureSession: captureSession)
         self.stillImageOutput.capturePhoto(with: photoSettings, delegate: imageCaptureListener!)
     }
-    
+
     private func createTorchButton() -> UIButton? {
         if let device = AVCaptureDevice.default(for: AVMediaType.video) {
             if device.hasTorch {
@@ -161,8 +161,7 @@ class CameraViewController: UIViewController, RestDataListener {
                 torchButton.tintColor = UIColor.black
                 torchButton.alpha = 0.5
                 torchButton.addTarget(self, action: #selector(toggleFlash), for: UIControl.Event.touchUpInside)
-                if let image = UIImage(named: "flashlight")
-                {
+                if let image = UIImage(named: "flashlight") {
                     torchButton.setImage(image, for: UIControl.State.normal)
                 }
                 view.addSubview(torchButton)
@@ -178,16 +177,16 @@ class CameraViewController: UIViewController, RestDataListener {
         }
         return nil
     }
-    
+
     @objc
     private func toggleFlash() {
         guard let device = AVCaptureDevice.default(for: AVMediaType.video) else { return }
         guard device.hasTorch else { print("Torch isn't available"); return }
-        
+
         do {
             try device.lockForConfiguration()
-            
-            if (device.torchMode == AVCaptureDevice.TorchMode.on) {
+
+            if device.torchMode == AVCaptureDevice.TorchMode.on {
                 device.torchMode = AVCaptureDevice.TorchMode.off
                 torchButton?.alpha = 0.5
             } else {
@@ -198,13 +197,13 @@ class CameraViewController: UIViewController, RestDataListener {
                     print(error)
                 }
             }
-            
+
             device.unlockForConfiguration()
         } catch {
             print(error)
         }
     }
-    
+
     private func captureDevice() -> AVCaptureDevice? {
         if #available(iOS 10.0, *) {
             let discoverySession = AVCaptureDevice.DiscoverySession(
@@ -216,7 +215,7 @@ class CameraViewController: UIViewController, RestDataListener {
         }
         return nil
     }
-    
+
     private func startSession() {
         weak var weakSelf = self
         sessionQueue.async {
@@ -224,7 +223,7 @@ class CameraViewController: UIViewController, RestDataListener {
             strongSelf.captureSession.startRunning()
         }
     }
-    
+
     private func stopSession() {
         weak var weakSelf = self
         sessionQueue.async {
@@ -232,16 +231,16 @@ class CameraViewController: UIViewController, RestDataListener {
             strongSelf.captureSession.stopRunning()
         }
     }
-    
+
     private func finishWithError(_ error: String) {
-        if (!finishedAlready) {
+        if !finishedAlready {
             finishedAlready = true
             delegate?.onError(error)
         }
     }
-    
-    private func finishWithResult(_ result: [String: Any]){
-        if (!finishedAlready) {
+
+    private func finishWithResult(_ result: [String: Any]) {
+        if !finishedAlready {
             finishedAlready = true
             delegate?.onComplete(result)
         }
