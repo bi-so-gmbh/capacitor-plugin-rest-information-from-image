@@ -122,6 +122,26 @@ class CameraViewController: UIViewController, RestDataListener {
         }
         captureSession.addOutput(stillImageOutput)
 
+        let preset = detectClosestPreset()
+        if captureSession.canSetSessionPreset(preset) {
+            print("preset set to \(preset.rawValue.replacingOccurrences(of: "AVCaptureSessionPreset", with: ""))")
+            captureSession.sessionPreset = preset
+        } else {
+            print("detected preset not valid, continue with default")
+        }
+    }
+    
+    private func detectClosestPreset() -> AVCaptureSession.Preset {
+        let biggest = settings.imageWidth > settings.imageHeight ? settings.imageWidth : settings.imageHeight
+        if biggest <= 1000 {
+            return .vga640x480
+        } else if biggest <= 1400 {
+            return .hd1280x720
+        } else if biggest > 1400 {
+            return .hd1920x1080
+        } else {
+            return .medium
+        }
     }
 
     private func setupUI() {
@@ -147,7 +167,7 @@ class CameraViewController: UIViewController, RestDataListener {
     @objc func onTouch(_ sender: UITapGestureRecognizer) {
         spinner!.isHidden = false
         let photoSettings: AVCapturePhotoSettings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
-        imageCaptureListener = ImageCaptureListener(httpRequest: httpRequest, restDataListener: self, captureSession: captureSession)
+        imageCaptureListener = ImageCaptureListener(httpRequest: httpRequest, restDataListener: self, captureSession: captureSession, scannerSettings: settings)
         self.stillImageOutput.capturePhoto(with: photoSettings, delegate: imageCaptureListener!)
     }
 

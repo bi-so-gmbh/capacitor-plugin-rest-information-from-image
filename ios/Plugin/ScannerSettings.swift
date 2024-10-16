@@ -37,6 +37,9 @@ class ScannerSettings: CustomDebugStringConvertible {
     private(set) var loadingCircleColor: String = "#FFF000"
     private(set) var loadingCircleUIColor: UIColor
     private(set) var loadingCircleSize: Int = 30
+    private(set) var imageHeight: Int = 720
+    private(set) var imageWidth: Int = 1280
+    private(set) var debug: Bool = false
 
     init(options: [String: Any]?) {
         if let options = options {
@@ -102,6 +105,18 @@ class ScannerSettings: CustomDebugStringConvertible {
                     if let temp = Utils.getInt(input: value) {
                         loadingCircleSize = temp
                     }
+                case Settings.IMAGE_HEIGHT:
+                    if let temp = Utils.getInt(input: value) {
+                        imageHeight = temp
+                    }
+                case Settings.IMAGE_WIDTH:
+                    if let temp = Utils.getInt(input: value) {
+                        imageWidth = temp
+                    }
+                case Settings.DEBUG:
+                    if let temp = value as? Bool {
+                        debug = temp
+                    }
                 default:
                     print("Unknown option: \(key)")
                 }
@@ -138,4 +153,7 @@ private enum Settings {
     static let VIBRATE_ON_SUCCESS: String = "vibrateOnSuccess"
     static let LOADING_CIRCLE_COLOR: String = "loadingCircleColor"
     static let LOADING_CIRCLE_SIZE: String = "loadingCircleSize"
+    static let IMAGE_HEIGHT: String = "imageHeight"
+    static let IMAGE_WIDTH: String = "imageWidth"
+    static let DEBUG: String = "debug"
 }

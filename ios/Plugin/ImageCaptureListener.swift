@@ -5,12 +5,14 @@ class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
     let httpRequest: HttpRequest
     let restDataListener: RestDataListener
     let captureSession: AVCaptureSession
+    let scannerSettings: ScannerSettings
     var runningTask: Task<Void, Never>?
 
-    init(httpRequest: HttpRequest, restDataListener: RestDataListener, captureSession: AVCaptureSession) {
+    init(httpRequest: HttpRequest, restDataListener: RestDataListener, captureSession: AVCaptureSession, scannerSettings: ScannerSettings) {
         self.httpRequest = httpRequest
         self.restDataListener = restDataListener
         self.captureSession = captureSession
+        self.scannerSettings = scannerSettings
     }
 
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
@@ -23,16 +25,36 @@ class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
             self.restDataListener.onRestData([Keys.ERROR: ErrorMessages.CAMERA_ERROR])
             return
         }
-
-        var image = UIImage(data: imageData)
+        
+        var image = UIImage(data: imageData, scale: 1.0)
         image = Utils.rotateImage(image: image!, orientation: Utils.imageOrientation(fromDevicePosition: .back))
-        if let base64 = image?.jpegData(compressionQuality: 0.75)?.base64EncodedString() {
+        
+        if let jpegData = image?.jpegData(compressionQuality: 0.75) {
+            if scannerSettings.debug {
+                saveImage(imageData: imageData)
+            }
             runningTask = Task {
-                let result = await doPOSTRequest(base64Image: base64)
+                let result = await doPOSTRequest(base64Image: jpegData.base64EncodedString())
                 self.restDataListener.onRestData(result)
             }
         } else {
             self.restDataListener.onRestData([Keys.ERROR: ErrorMessages.CAMERA_ERROR])
+        }
+    }
+    
+    func saveImage(imageData: Data) {
+        let timestamp = NSDate().timeIntervalSince1970 * 1000
+        let filename = "debug_\(timestamp).jpg"
+        let url: URL
+        if #available(iOS 16.0, *) {
+            url = URL.documentsDirectory.appendingPathComponent(filename)
+        } else {
+            url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent(filename)
+        }
+        do {
+            try imageData.write(to: url, options: [.atomic])
+        } catch let error {
+            print("Error saving image: \(error.localizedDescription)")
         }
     }
 
