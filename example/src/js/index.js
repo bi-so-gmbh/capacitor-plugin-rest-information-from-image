@@ -18,7 +18,7 @@
  */
 
 import { Capacitor } from '@capacitor/core';
-import { RestInformation } from 'capacitor-plugin-rest-information-from-image';
+import { RestInformation } from 'biso-gmbh-capacitor-plugin-rest-information-from-image';
 import data from '../data.json';
 
 const options = {
