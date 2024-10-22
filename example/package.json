@@ -16,11 +16,11 @@
     "@capacitor/android": "^6.1.2",
     "@capacitor/core": "^6.1.2",
     "@capacitor/ios": "^6.1.2",
-    "capacitor-plugin-rest-information-from-image": "file:.."
+    "@biso_gmbh/capacitor-plugin-rest-information-from-image": "file:.."
   },
   "devDependencies": {
-    "@capacitor/cli": "latest-6",
-    "vite": "^5.4.8"
+    "@capacitor/cli": "^6.1.2",
+    "vite": "^5.4.9"
   },
   "author": "Nadine Seibel",
   "license": "MIT"
