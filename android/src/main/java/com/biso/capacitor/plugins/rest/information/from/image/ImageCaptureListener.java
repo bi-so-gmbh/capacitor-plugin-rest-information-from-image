@@ -20,6 +20,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.Iterator;
 import java.util.Objects;
@@ -49,13 +51,23 @@ public class ImageCaptureListener extends OnImageCapturedCallback {
       imageProxy.close();
       return;
     }
-    ByteArrayOutputStream byteArrayOutputStream = imageToByteArrayOutputStream(image, imageProxy.getImageInfo().getRotationDegrees());
+    ByteArrayOutputStream byteArrayOutputStream = imageToByteArrayOutputStream(image,
+      scannerSettings.getImageCompression() * 100, imageProxy.getImageInfo().getRotationDegrees());
     String base64Image = ImageUtils.imageToBase64(byteArrayOutputStream);
 
-    if (scannerSettings.getDebug()) {
-      String folder = Environment.getExternalStorageDirectory().toString() + "/DCIM/Test";
-      String fileName = Instant.now().getEpochSecond() + ".jpg";
-      saveImageToDisk(byteArrayOutputStream, folder, fileName);
+    if (scannerSettings.getSaveImage()) {
+      String folder = Environment.getExternalStorageDirectory().toString() + "/" + scannerSettings.getAndroidImageLocation();
+      Log.i(LOG_KEY, folder);
+      try {
+        Files.createDirectories(Paths.get(folder));
+        String timestamp = (String) android.text.format.DateFormat.format("yyMMdd-hhmmss",
+          new java.util.Date());
+        String fileName = scannerSettings.getImageName() + "_" + timestamp + ".jpg";
+        saveImageToDisk(byteArrayOutputStream, folder, fileName);
+      } catch (IOException e) {
+        Log.e(LOG_KEY, e.getMessage());
+        throw new RuntimeException(e);
+      }
     }
 
     imageProxy.close();

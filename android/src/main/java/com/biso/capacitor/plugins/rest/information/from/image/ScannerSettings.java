@@ -1,6 +1,9 @@
 package com.biso.capacitor.plugins.rest.information.from.image;
 
-import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.DEBUG;
+import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.ANDROID_IMAGE_LOCATION;
+import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.IMAGE_COMPRESSION;
+import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.IMAGE_NAME;
+import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.SAVE_IMAGE;
 import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.LOADING_CIRCLE_COLOR;
 import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.LOADING_CIRCLE_SIZE;
 import static com.biso.capacitor.plugins.rest.information.from.image.ScannerSettings.Settings.IMAGE_HEIGHT;
@@ -49,7 +52,10 @@ public class ScannerSettings implements Parcelable {
   private int loadingCircleSize = 20;
   private int imageWidth = 720;
   private int imageHeight = 1280;
-  private boolean debug = false;
+  private double imageCompression = 0.75;
+  private boolean saveImage = false;
+  private String imageName = "debug";
+  private String androidImageLocation = "Download/";
 
   public ScannerSettings(JSONObject settings) {
     Iterator<String> keys = settings.keys();
@@ -122,8 +128,17 @@ public class ScannerSettings implements Parcelable {
           case IMAGE_HEIGHT:
             imageHeight = settings.optInt(IMAGE_HEIGHT.value(), getImageHeight());
             break;
-          case DEBUG:
-            debug = settings.optBoolean(DEBUG.value(), getDebug());
+          case IMAGE_COMPRESSION:
+            imageCompression = settings.optDouble(IMAGE_COMPRESSION.value(), imageCompression);
+            break;
+          case SAVE_IMAGE:
+            saveImage = settings.optBoolean(SAVE_IMAGE.value(), getSaveImage());
+            break;
+          case IMAGE_NAME:
+            imageName = settings.optString(IMAGE_NAME.value(), imageName);
+            break;
+          case ANDROID_IMAGE_LOCATION:
+            androidImageLocation = settings.optString(ANDROID_IMAGE_LOCATION.value(), androidImageLocation);
             break;
           default:
             Log.e("SETTINGS", "No known setting for " + key);
@@ -207,8 +222,20 @@ public class ScannerSettings implements Parcelable {
     return imageHeight;
   }
 
-  public boolean getDebug() {
-    return debug;
+  public double getImageCompression() {
+    return imageCompression;
+  }
+
+  public boolean getSaveImage() {
+    return saveImage;
+  }
+
+  public String getImageName() {
+    return imageName;
+  }
+
+  public String getAndroidImageLocation() {
+    return androidImageLocation;
   }
 
   @Override
@@ -238,7 +265,10 @@ public class ScannerSettings implements Parcelable {
         && getLoadingCircleSize() == that.getLoadingCircleSize()
         && getImageWidth() == that.getImageWidth()
         && getImageHeight() == that.getImageHeight()
-        && getDebug() == that.getDebug();
+        && getImageCompression() == that.getImageCompression()
+        && getSaveImage() == that.getSaveImage()
+        && getImageName().equals(that.getImageName())
+        && getAndroidImageLocation().equals(that.getAndroidImageLocation());
   }
 
   @Override
@@ -262,7 +292,10 @@ public class ScannerSettings implements Parcelable {
         getLoadingCircleSize(),
         getImageWidth(),
         getImageHeight(),
-        getDebug()
+        getImageCompression(),
+        getSaveImage(),
+        getImageCompression(),
+        getAndroidImageLocation()
     );
   }
 
@@ -291,7 +324,10 @@ public class ScannerSettings implements Parcelable {
     dest.writeInt(this.getLoadingCircleSize());
     dest.writeInt(this.getImageWidth());
     dest.writeInt(this.getImageHeight());
-    dest.writeByte(this.getDebug() ? (byte) 1 : (byte) 0);
+    dest.writeDouble(this.getImageCompression());
+    dest.writeByte(this.getSaveImage() ? (byte) 1 : (byte) 0);
+    dest.writeString(this.getImageName());
+    dest.writeString(this.getAndroidImageLocation());
   }
 
   protected ScannerSettings(Parcel in) {
@@ -313,7 +349,10 @@ public class ScannerSettings implements Parcelable {
     this.loadingCircleSize = in.readInt();
     this.imageWidth = in.readInt();
     this.imageHeight = in.readInt();
-    this.debug = in.readByte() != 0;
+    this.imageCompression = in.readDouble();
+    this.saveImage = in.readByte() != 0;
+    this.imageName = in.readString();
+    this.androidImageLocation = in.readString();
   }
 
   public static final Creator<ScannerSettings> CREATOR = new Creator<>() {
@@ -329,7 +368,6 @@ public class ScannerSettings implements Parcelable {
   };
 
   public enum Settings {
-
     BARCODE_FORMATS("barcodeFormats"),
     DETECTOR_ASPECT_RATIO("detectorAspectRatio"),
     DETECTOR_SIZE("detectorSize"),
@@ -349,7 +387,10 @@ public class ScannerSettings implements Parcelable {
     LOADING_CIRCLE_SIZE("loadingCircleSize"),
     IMAGE_WIDTH("imageWidth"),
     IMAGE_HEIGHT("imageHeight"),
-    DEBUG("debug");
+    IMAGE_COMPRESSION("imageCompression"),
+    SAVE_IMAGE("saveImage"),
+    IMAGE_NAME("imageName"),
+    ANDROID_IMAGE_LOCATION("androidImageLocation");
 
     private final String option;
 
