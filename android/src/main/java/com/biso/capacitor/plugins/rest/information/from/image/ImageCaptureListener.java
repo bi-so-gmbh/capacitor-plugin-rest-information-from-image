@@ -6,6 +6,7 @@ import static com.biso.capacitor.plugins.rest.information.from.image.ImageUtils.
 import android.content.Intent;
 import android.media.Image;
 import android.os.Environment;
+import android.text.format.DateFormat;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.camera.core.ImageCapture.OnImageCapturedCallback;
@@ -22,7 +23,7 @@ import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.Instant;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -57,11 +58,9 @@ public class ImageCaptureListener extends OnImageCapturedCallback {
 
     if (scannerSettings.getSaveImage()) {
       String folder = Environment.getExternalStorageDirectory().toString() + "/" + scannerSettings.getAndroidImageLocation();
-      Log.i(LOG_KEY, folder);
       try {
         Files.createDirectories(Paths.get(folder));
-        String timestamp = (String) android.text.format.DateFormat.format("yyMMdd-hhmmss",
-          new java.util.Date());
+        String timestamp = (String) DateFormat.format("yyMMdd-hhmmss", new Date());
         String fileName = scannerSettings.getImageName() + "_" + timestamp + ".jpg";
         saveImageToDisk(byteArrayOutputStream, folder, fileName);
       } catch (IOException e) {
