@@ -29,9 +29,16 @@ class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
         var image = UIImage(data: imageData, scale: 1.0)
         image = Utils.rotateImage(image: image!, orientation: Utils.imageOrientation(fromDevicePosition: .back))
         
-        if let jpegData = image?.jpegData(compressionQuality: 0.75) {
+        var jpegData: Data?
+        if #available(iOS 14.0, *) {
+            jpegData = toJpeg(cgImage: image!.cgImage!, compressionQuality: 0.75)
+        } else {
+            jpegData = image?.jpegData(compressionQuality: 0.75) // this loses the rotation somehow, so only good as fallback
+        }
+        
+        if let jpegData {
             if scannerSettings.debug {
-                saveImage(imageData: imageData)
+                saveImage(imageData: jpegData)
             }
             runningTask = Task {
                 let result = await doPOSTRequest(base64Image: jpegData.base64EncodedString())
@@ -40,6 +47,16 @@ class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
         } else {
             self.restDataListener.onRestData([Keys.ERROR: ErrorMessages.CAMERA_ERROR])
         }
+    }
+    
+    @available(iOS 14.0, *)
+    func toJpeg(cgImage: CGImage, compressionQuality: Float) -> Data? {
+        let data = NSMutableData()
+        let options: NSDictionary = [kCGImageDestinationLossyCompressionQuality as String: compressionQuality]
+        let dest = CGImageDestinationCreateWithData(data as CFMutableData, UTType.jpeg.identifier as CFString, 1, nil)!
+        CGImageDestinationAddImage(dest, cgImage, options)
+        CGImageDestinationFinalize(dest)
+        return data as Data
     }
     
     func saveImage(imageData: Data) {
