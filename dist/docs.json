@@ -37,7 +37,7 @@
         {
           "name": "request",
           "tags": [],
-          "docs": "",
+          "docs": "request configuration",
           "complexTypes": [
             "IRequest"
           ],
@@ -46,7 +46,7 @@
         {
           "name": "settings",
           "tags": [],
-          "docs": "",
+          "docs": "scanner settings, can be left empty which will use default settings",
           "complexTypes": [
             "ISettings"
           ],
@@ -64,14 +64,14 @@
         {
           "name": "url",
           "tags": [],
-          "docs": "",
+          "docs": "the url the image will be posted to",
           "complexTypes": [],
           "type": "string"
         },
         {
           "name": "headers",
           "tags": [],
-          "docs": "",
+          "docs": "the headers to include, can be an empty object",
           "complexTypes": [
             "Record"
           ],
@@ -80,7 +80,7 @@
         {
           "name": "body",
           "tags": [],
-          "docs": "",
+          "docs": "the body to include, can be an empty object",
           "complexTypes": [
             "Record"
           ],
@@ -89,14 +89,14 @@
         {
           "name": "base64Key",
           "tags": [],
-          "docs": "",
+          "docs": "the key under which the base64 data of the image will be sent",
           "complexTypes": [],
           "type": "string | undefined"
         },
         {
           "name": "imageTypeKey",
           "tags": [],
-          "docs": "",
+          "docs": "the key under which the image filetype will be sent",
           "complexTypes": [],
           "type": "string | undefined"
         }
@@ -105,128 +105,156 @@
     {
       "name": "ISettings",
       "slug": "isettings",
-      "docs": "All settings that can be passed to the plugin. The `detectorSize` value must be between\n`0` and `1`, because it determines how many percent of the screen should be covered by\nthe detector.\nIf the value is greater than 1 the detector will not be visible on the screen.",
+      "docs": "All settings that can be passed to the plugin.",
       "tags": [],
       "methods": [],
       "properties": [
         {
           "name": "beepOnSuccess",
           "tags": [],
-          "docs": "",
+          "docs": "when true the device will beep on image capture",
           "complexTypes": [],
           "type": "boolean | undefined"
         },
         {
           "name": "vibrateOnSuccess",
           "tags": [],
-          "docs": "",
+          "docs": "when true the device will vibrate on image capture",
           "complexTypes": [],
           "type": "boolean | undefined"
         },
         {
           "name": "detectorSize",
           "tags": [],
-          "docs": "",
+          "docs": "between '0' and '1', determines the percentage of the screen will be covered",
           "complexTypes": [],
           "type": "number | undefined"
         },
         {
           "name": "detectorAspectRatio",
           "tags": [],
-          "docs": "",
+          "docs": "aspect ratio of the detector in format 2:1",
           "complexTypes": [],
           "type": "string | undefined"
         },
         {
           "name": "drawFocusRect",
           "tags": [],
-          "docs": "",
+          "docs": "when true the detection area will be outlined",
           "complexTypes": [],
           "type": "boolean | undefined"
         },
         {
           "name": "focusRectColor",
           "tags": [],
-          "docs": "",
+          "docs": "color of the detection area outline as hex code (supports alpha)",
           "complexTypes": [],
           "type": "string | undefined"
         },
         {
           "name": "focusRectBorderRadius",
           "tags": [],
-          "docs": "",
+          "docs": "corner radius of the detection area",
           "complexTypes": [],
           "type": "number | undefined"
         },
         {
           "name": "focusRectBorderThickness",
           "tags": [],
-          "docs": "",
+          "docs": "border thickness of the detection area outline",
           "complexTypes": [],
           "type": "number | undefined"
         },
         {
           "name": "drawFocusLine",
           "tags": [],
-          "docs": "",
+          "docs": "when true a line will mark the center of the detection area",
           "complexTypes": [],
           "type": "boolean | undefined"
         },
         {
           "name": "focusLineColor",
           "tags": [],
-          "docs": "",
+          "docs": "color of the focus line as hex code (supports alpha)",
           "complexTypes": [],
           "type": "string | undefined"
         },
         {
           "name": "focusLineThickness",
           "tags": [],
-          "docs": "",
+          "docs": "thickness of the focus line",
           "complexTypes": [],
           "type": "number | undefined"
         },
         {
           "name": "drawFocusBackground",
           "tags": [],
-          "docs": "",
+          "docs": "when true the area outside the detector will be filled",
           "complexTypes": [],
           "type": "boolean | undefined"
         },
         {
           "name": "focusBackgroundColor",
           "tags": [],
-          "docs": "",
+          "docs": "color to fill the background with as hex code (supports alpha)",
           "complexTypes": [],
           "type": "string | undefined"
         },
         {
           "name": "loadingCircleColor",
           "tags": [],
-          "docs": "",
+          "docs": "the color of the loading spinner as hex (supports alpha)",
           "complexTypes": [],
           "type": "string | undefined"
         },
         {
           "name": "loadingCircleSize",
           "tags": [],
-          "docs": "",
+          "docs": "the size of the loading spinner",
           "complexTypes": [],
           "type": "number | undefined"
         },
         {
           "name": "imageWidth",
           "tags": [],
-          "docs": "",
+          "docs": "image width in px, if width and height are not valid, closest valid size will be used",
           "complexTypes": [],
           "type": "number | undefined"
         },
         {
           "name": "imageHeight",
           "tags": [],
-          "docs": "",
+          "docs": "image height in px, if width and height are not valid, closest valid size will be used",
           "complexTypes": [],
           "type": "number | undefined"
+        },
+        {
+          "name": "imageCompression",
+          "tags": [],
+          "docs": "image compression, value between '0' and '1', '1' is uncompressed",
+          "complexTypes": [],
+          "type": "number | undefined"
+        },
+        {
+          "name": "saveImage",
+          "tags": [],
+          "docs": "when true the image will be saved to the device",
+          "complexTypes": [],
+          "type": "boolean | undefined"
+        },
+        {
+          "name": "imageName",
+          "tags": [],
+          "docs": "prefix of the image name, will be extended with the current date and time",
+          "complexTypes": [],
+          "type": "string | undefined"
+        },
+        {
+          "name": "androidImageLocation",
+          "tags": [],
+          "docs": "the folder inside Documents to save the image to on android, on iOS it defaults to the app name and can't be changed",
+          "complexTypes": [],
+          "type": "string | undefined"
         }
       ]
     }
