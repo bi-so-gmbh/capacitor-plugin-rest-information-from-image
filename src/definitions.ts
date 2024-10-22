@@ -46,7 +46,11 @@ export interface ISettings {
   saveImage?: boolean;
   /** prefix of the image name, will be extended with the current date and time */
   imageName?: string;
-  /** the folder inside Documents to save the image to on android, on iOS it defaults to the app name and can't be changed */
+  /**
+   * the folder inside the external storage to save the image to on android. needs to be in
+   * a folder an app is allowed to work in (eg. Documents/ or Download/).
+   * On iOS the folder can't be changed and manually and defaults to 'Documents/<AppName>'
+   */
   androidImageLocation?: string;
 }
 

@@ -252,7 +252,7 @@
         {
           "name": "androidImageLocation",
           "tags": [],
-          "docs": "the folder inside Documents to save the image to on android, on iOS it defaults to the app name and can't be changed",
+          "docs": "the folder inside the external storage to save the image to on android. needs to be in\na folder an app is allowed to work in (eg. Documents/ or Download/).\nOn iOS the folder can't be changed and manually and defaults to 'Documents/<AppName>'",
           "complexTypes": [],
           "type": "string | undefined"
         }
