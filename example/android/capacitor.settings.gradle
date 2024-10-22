@@ -2,5 +2,5 @@
 include ':capacitor-android'
 project(':capacitor-android').projectDir = new File('../node_modules/@capacitor/android/capacitor')
 
-include ':biso-gmbh-capacitor-plugin-rest-information-from-image'
-project(':biso-gmbh-capacitor-plugin-rest-information-from-image').projectDir = new File('../../android')
+include ':biso_gmbh-capacitor-plugin-rest-information-from-image'
+project(':biso_gmbh-capacitor-plugin-rest-information-from-image').projectDir = new File('../../android')

@@ -17,8 +17,8 @@
  * under the License.
  */
 
+import { RestInformation } from '@biso_gmbh/capacitor-plugin-rest-information-from-image';
 import { Capacitor } from '@capacitor/core';
-import { RestInformation } from 'biso-gmbh-capacitor-plugin-rest-information-from-image';
 
 import data from '../data.json';
 

@@ -9,7 +9,7 @@ android {
 
 apply from: "../capacitor-cordova-android-plugins/cordova.variables.gradle"
 dependencies {
-    implementation project(':biso-gmbh-capacitor-plugin-rest-information-from-image')
+    implementation project(':biso_gmbh-capacitor-plugin-rest-information-from-image')
 
 }
 
