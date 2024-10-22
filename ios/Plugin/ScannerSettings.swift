@@ -37,6 +37,11 @@ class ScannerSettings: CustomDebugStringConvertible {
     private(set) var loadingCircleColor: String = "#FFF000"
     private(set) var loadingCircleUIColor: UIColor
     private(set) var loadingCircleSize: Int = 30
+    private(set) var imageHeight: Int = 720
+    private(set) var imageWidth: Int = 1280
+    private(set) var imageCompression: Double = 0.75
+    private(set) var saveImage: Bool = false
+    private(set) var imageName: String = "debug"
 
     init(options: [String: Any]?) {
         if let options = options {
@@ -102,6 +107,28 @@ class ScannerSettings: CustomDebugStringConvertible {
                     if let temp = Utils.getInt(input: value) {
                         loadingCircleSize = temp
                     }
+                case Settings.IMAGE_HEIGHT:
+                    if let temp = Utils.getInt(input: value) {
+                        imageHeight = temp
+                    }
+                case Settings.IMAGE_WIDTH:
+                    if let temp = Utils.getInt(input: value) {
+                        imageWidth = temp
+                    }
+                case Settings.IMAGE_COMPRESSION:
+                    if let temp = Utils.getDouble(input: value) {
+                        imageCompression = temp
+                    }
+                case Settings.SAVE_IMAGE:
+                    if let temp = value as? Bool {
+                        saveImage = temp
+                    }
+                case Settings.IMAGE_NAME:
+                    if let temp = value as? String {
+                        imageName = temp
+                    }
+                case Settings.ANDROID_IMAGE_LOCATION:
+                    break
                 default:
                     print("Unknown option: \(key)")
                 }
@@ -138,4 +165,10 @@ private enum Settings {
     static let VIBRATE_ON_SUCCESS: String = "vibrateOnSuccess"
     static let LOADING_CIRCLE_COLOR: String = "loadingCircleColor"
     static let LOADING_CIRCLE_SIZE: String = "loadingCircleSize"
+    static let IMAGE_HEIGHT: String = "imageHeight"
+    static let IMAGE_WIDTH: String = "imageWidth"
+    static let IMAGE_COMPRESSION: String = "imageCompression"
+    static let SAVE_IMAGE: String = "saveImage"
+    static let IMAGE_NAME: String = "imageName"
+    static let ANDROID_IMAGE_LOCATION: String = "androidImageLocation"
 }

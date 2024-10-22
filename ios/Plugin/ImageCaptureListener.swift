@@ -31,13 +31,13 @@ class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
         
         var jpegData: Data?
         if #available(iOS 14.0, *) {
-            jpegData = toJpeg(cgImage: image!.cgImage!, compressionQuality: 0.75)
+            jpegData = toJpeg(cgImage: image!.cgImage!, compressionQuality: Float(scannerSettings.imageCompression))
         } else {
-            jpegData = image?.jpegData(compressionQuality: 0.75) // this loses the rotation somehow, so only good as fallback
+            jpegData = image?.jpegData(compressionQuality: scannerSettings.imageCompression) // this loses the rotation somehow, so only good as fallback
         }
         
         if let jpegData {
-            if scannerSettings.debug {
+            if scannerSettings.saveImage {
                 saveImage(imageData: jpegData)
             }
             runningTask = Task {
@@ -60,8 +60,10 @@ class ImageCaptureListener: NSObject, AVCapturePhotoCaptureDelegate {
     }
     
     func saveImage(imageData: Data) {
-        let timestamp = NSDate().timeIntervalSince1970 * 1000
-        let filename = "debug_\(timestamp).jpg"
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyMMdd'-'HHmmss"
+        let timestamp = dateFormatter.string(from: Date())
+        let filename = scannerSettings.imageName + "_\(timestamp).jpg"
         let url: URL
         if #available(iOS 16.0, *) {
             url = URL.documentsDirectory.appendingPathComponent(filename)
