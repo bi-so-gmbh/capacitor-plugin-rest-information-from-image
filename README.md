@@ -46,10 +46,10 @@ scan(scanCall: IScanCall) => Promise<object>
 The configuration object for the plugin. <a href="#irequest">IRequest</a> is mandatory because it configures needed
 things like the url, settings can be left empty, which will use the default settings.
 
-| Prop           | Type                                            |
-| -------------- | ----------------------------------------------- |
-| **`request`**  | <code><a href="#irequest">IRequest</a></code>   |
-| **`settings`** | <code><a href="#isettings">ISettings</a></code> |
+| Prop           | Type                                            | Description                                                         |
+| -------------- | ----------------------------------------------- | ------------------------------------------------------------------- |
+| **`request`**  | <code><a href="#irequest">IRequest</a></code>   | request configuration                                               |
+| **`settings`** | <code><a href="#isettings">ISettings</a></code> | scanner settings, can be left empty which will use default settings |
 
 
 #### IRequest
@@ -58,41 +58,42 @@ Data used for the http request. Url, headers and body are required, though both 
 and body can be an empty object. base64Key and imageTypeKey configure how the image and the
 image type will be named when they are added to the body.
 
-| Prop               | Type                                                            |
-| ------------------ | --------------------------------------------------------------- |
-| **`url`**          | <code>string</code>                                             |
-| **`headers`**      | <code><a href="#record">Record</a>&lt;string, string&gt;</code> |
-| **`body`**         | <code><a href="#record">Record</a>&lt;string, any&gt;</code>    |
-| **`base64Key`**    | <code>string</code>                                             |
-| **`imageTypeKey`** | <code>string</code>                                             |
+| Prop               | Type                                                            | Description                                                   |
+| ------------------ | --------------------------------------------------------------- | ------------------------------------------------------------- |
+| **`url`**          | <code>string</code>                                             | the url the image will be posted to                           |
+| **`headers`**      | <code><a href="#record">Record</a>&lt;string, string&gt;</code> | the headers to include, can be an empty object                |
+| **`body`**         | <code><a href="#record">Record</a>&lt;string, any&gt;</code>    | the body to include, can be an empty object                   |
+| **`base64Key`**    | <code>string</code>                                             | the key under which the base64 data of the image will be sent |
+| **`imageTypeKey`** | <code>string</code>                                             | the key under which the image filetype will be sent           |
 
 
 #### ISettings
 
-All settings that can be passed to the plugin. The `detectorSize` value must be between
-`0` and `1`, because it determines how many percent of the screen should be covered by
-the detector.
-If the value is greater than 1 the detector will not be visible on the screen.
+All settings that can be passed to the plugin.
 
-| Prop                           | Type                 |
-| ------------------------------ | -------------------- |
-| **`beepOnSuccess`**            | <code>boolean</code> |
-| **`vibrateOnSuccess`**         | <code>boolean</code> |
-| **`detectorSize`**             | <code>number</code>  |
-| **`detectorAspectRatio`**      | <code>string</code>  |
-| **`drawFocusRect`**            | <code>boolean</code> |
-| **`focusRectColor`**           | <code>string</code>  |
-| **`focusRectBorderRadius`**    | <code>number</code>  |
-| **`focusRectBorderThickness`** | <code>number</code>  |
-| **`drawFocusLine`**            | <code>boolean</code> |
-| **`focusLineColor`**           | <code>string</code>  |
-| **`focusLineThickness`**       | <code>number</code>  |
-| **`drawFocusBackground`**      | <code>boolean</code> |
-| **`focusBackgroundColor`**     | <code>string</code>  |
-| **`loadingCircleColor`**       | <code>string</code>  |
-| **`loadingCircleSize`**        | <code>number</code>  |
-| **`imageWidth`**               | <code>number</code>  |
-| **`imageHeight`**              | <code>number</code>  |
+| Prop                           | Type                 | Description                                                                                                          |
+| ------------------------------ | -------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| **`beepOnSuccess`**            | <code>boolean</code> | when true the device will beep on image capture                                                                      |
+| **`vibrateOnSuccess`**         | <code>boolean</code> | when true the device will vibrate on image capture                                                                   |
+| **`detectorSize`**             | <code>number</code>  | between '0' and '1', determines the percentage of the screen will be covered                                         |
+| **`detectorAspectRatio`**      | <code>string</code>  | aspect ratio of the detector in format 2:1                                                                           |
+| **`drawFocusRect`**            | <code>boolean</code> | when true the detection area will be outlined                                                                        |
+| **`focusRectColor`**           | <code>string</code>  | color of the detection area outline as hex code (supports alpha)                                                     |
+| **`focusRectBorderRadius`**    | <code>number</code>  | corner radius of the detection area                                                                                  |
+| **`focusRectBorderThickness`** | <code>number</code>  | border thickness of the detection area outline                                                                       |
+| **`drawFocusLine`**            | <code>boolean</code> | when true a line will mark the center of the detection area                                                          |
+| **`focusLineColor`**           | <code>string</code>  | color of the focus line as hex code (supports alpha)                                                                 |
+| **`focusLineThickness`**       | <code>number</code>  | thickness of the focus line                                                                                          |
+| **`drawFocusBackground`**      | <code>boolean</code> | when true the area outside the detector will be filled                                                               |
+| **`focusBackgroundColor`**     | <code>string</code>  | color to fill the background with as hex code (supports alpha)                                                       |
+| **`loadingCircleColor`**       | <code>string</code>  | the color of the loading spinner as hex (supports alpha)                                                             |
+| **`loadingCircleSize`**        | <code>number</code>  | the size of the loading spinner                                                                                      |
+| **`imageWidth`**               | <code>number</code>  | image width in px, if width and height are not valid, closest valid size will be used                                |
+| **`imageHeight`**              | <code>number</code>  | image height in px, if width and height are not valid, closest valid size will be used                               |
+| **`imageCompression`**         | <code>number</code>  | image compression, value between '0' and '1', '1' is uncompressed                                                    |
+| **`saveImage`**                | <code>boolean</code> | when true the image will be saved to the device                                                                      |
+| **`imageName`**                | <code>string</code>  | prefix of the image name, will be extended with the current date and time                                            |
+| **`androidImageLocation`**     | <code>string</code>  | the folder inside Documents to save the image to on android, on iOS it defaults to the app name and can't be changed |
 
 
 ### Type Aliases

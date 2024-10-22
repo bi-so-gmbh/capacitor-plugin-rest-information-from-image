@@ -19,6 +19,7 @@
 
 import { Capacitor } from '@capacitor/core';
 import { RestInformation } from 'biso-gmbh-capacitor-plugin-rest-information-from-image';
+
 import data from '../data.json';
 
 const options = {
@@ -39,7 +40,10 @@ const options = {
   loadingCircleSize: 30,
   imageWidth: 1280,
   imageHeight: 720,
-  debug: false,
+  imageCompression: 0.75,
+  saveImage: false,
+  imageName: "debug",
+  androidImageLocation: "rest-information-test-app"
 };
 
 init();
