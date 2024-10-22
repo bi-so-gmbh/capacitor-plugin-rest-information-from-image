@@ -43,7 +43,7 @@ const options = {
   imageCompression: 0.75,
   saveImage: false,
   imageName: "debug",
-  androidImageLocation: "rest-information-test-app"
+  androidImageLocation: "Download/rest-information-test-app"
 };
 
 init();
