@@ -83,11 +83,8 @@ async function scan() {
       request: data,
       settings: options,
     });
-    console.log('result', JSON.stringify(result, null, 2));
     onSuccess(result);
   } catch (error) {
-    console.log("error", error)
-    console.log("error json", JSON.stringify(error, null, 2));
     onFail(error);
   }
 }
