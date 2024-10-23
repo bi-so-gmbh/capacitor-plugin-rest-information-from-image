@@ -22,6 +22,7 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import org.json.JSONException;
 
@@ -70,7 +71,7 @@ public class RestInformationPlugin extends Plugin {
 
     JSObject scanCall = call.getData();
     if (Objects.isNull(scanCall) || !scanCall.has(Keys.REQUEST)) {
-      call.reject(ErrorMessages.REQUIRED_DATA_MISSING);
+      call.reject(ErrorMessages.REQUIRED_DATA_MISSING, buildErrorObject(ErrorMessages.REQUIRED_DATA_MISSING));
     }
 
     JSObject scanSettings = scanCall.getJSObject(Keys.SETTINGS);
@@ -84,11 +85,11 @@ public class RestInformationPlugin extends Plugin {
       if (scanRequest != null && scanRequest.length() > 0) {
         httpRequest = new HttpRequest(scanRequest);
       } else {
-        call.reject(ErrorMessages.REQUEST_INVALID);
+        call.reject(ErrorMessages.REQUEST_INVALID, buildErrorObject(ErrorMessages.REQUEST_INVALID));
       }
     } catch (MalformedURLException e) {
       Log.e(LOG_TAG, e.getMessage());
-      call.reject(ErrorMessages.INVALID_URL);
+      call.reject(ErrorMessages.INVALID_URL, buildErrorObject(ErrorMessages.INVALID_URL));
     }
     intent.putExtra(Keys.SETTINGS, scannerSettings);
     intent.putExtra(Keys.REQUEST, httpRequest);
@@ -105,16 +106,16 @@ public class RestInformationPlugin extends Plugin {
     // finishWithSuccess used (ImageCaptureListener via RestDataListener)
     if (result.getResultCode() == CommonStatusCodes.SUCCESS) {
       if (data == null) {
-        call.reject(ErrorMessages.CANCELLED);
+        call.reject(ErrorMessages.CANCELLED, buildErrorObject(ErrorMessages.CANCELLED));
         return;
       }
       JSObject scanResult = new JSObject(data.getStringExtra(Keys.RESULT));
       if (scanResult.length() == 0) {
-        call.reject(ErrorMessages.EMPTY_RESPONSE);
+        call.reject(ErrorMessages.EMPTY_RESPONSE, buildErrorObject(ErrorMessages.EMPTY_RESPONSE));
         return;
       }
 
-      if(!scanResult.has(Keys.ERROR)) {
+      if (!scanResult.has(Keys.ERROR)) {
         if (scannerSettings.isBeepOnSuccess()) {
           mediaPlayer.start();
         }
@@ -129,13 +130,11 @@ public class RestInformationPlugin extends Plugin {
       if (scanResult.has(Keys.STATUS) && scanResult.getInt(Keys.STATUS) == 200) {
         call.resolve(scanResult);
       } else {
-        if (scanResult.has(Keys.ERROR)) {
-          if (scanResult.has(Keys.STATUS)) {
-            call.reject(scanResult.getString(Keys.ERROR), String.valueOf(scanResult.getInt(Keys.STATUS)));
-          } else {
-            call.reject(scanResult.getString(Keys.ERROR));
-          }
-        }
+        call.reject(
+          scanResult.has(Keys.ERROR) ? scanResult.getString(Keys.ERROR): ErrorMessages.UNKNOWN_ERROR,
+          scanResult.has(Keys.STATUS) ? String.valueOf(scanResult.getInt(Keys.STATUS)): null,
+          scanResult
+        );
       }
     }
     // finishWithError used
@@ -144,7 +143,14 @@ public class RestInformationPlugin extends Plugin {
       if (data != null && (data.hasExtra(Keys.ERROR))) {
           err = data.getStringExtra(Keys.ERROR);
       }
-      call.reject(err);
+      call.reject(err, buildErrorObject(err));
     }
+  }
+
+  private JSObject buildErrorObject(String message) {
+    JSObject errorObject = new JSObject();
+    errorObject.put(Keys.ERROR, message);
+    errorObject.put("timestamp", LocalDateTime.now());
+    return  errorObject;
   }
 }
