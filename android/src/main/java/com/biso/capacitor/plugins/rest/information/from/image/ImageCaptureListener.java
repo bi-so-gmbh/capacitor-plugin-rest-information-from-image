@@ -60,7 +60,7 @@ public class ImageCaptureListener extends OnImageCapturedCallback {
       String folder = Environment.getExternalStorageDirectory().toString() + "/" + scannerSettings.getAndroidImageLocation();
       try {
         Files.createDirectories(Paths.get(folder));
-        String timestamp = (String) DateFormat.format("yyMMdd-hhmmss", new Date());
+        String timestamp = (String) DateFormat.format("yyMMdd-HHmmss", new Date());
         String fileName = scannerSettings.getImageName() + "_" + timestamp + ".jpg";
         saveImageToDisk(byteArrayOutputStream, folder, fileName);
       } catch (IOException e) {
