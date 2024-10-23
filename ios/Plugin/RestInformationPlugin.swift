@@ -18,7 +18,7 @@ public class RestInformationPlugin: CAPPlugin, CameraViewControllerDelegate {
         self.call = call
 
         if options.isEmpty || !options.keys.contains(Keys.REQUEST) {
-            call.reject(ErrorMessages.REQUIRED_DATA_MISSING)
+            call.reject(ErrorMessages.REQUIRED_DATA_MISSING, nil, nil, buildErrorObject(message: ErrorMessages.REQUIRED_DATA_MISSING))
             return
         }
 
@@ -26,12 +26,12 @@ public class RestInformationPlugin: CAPPlugin, CameraViewControllerDelegate {
 
         guard let scanRequest = options[Keys.REQUEST] as? [String: Any]
         else {
-            call.reject(ErrorMessages.REQUEST_INVALID)
+            call.reject(ErrorMessages.REQUEST_INVALID, nil, nil, buildErrorObject(message: ErrorMessages.REQUEST_INVALID))
             return
         }
         httpRequest = HttpRequest(request: scanRequest)
         if httpRequest == nil {
-            call.reject(ErrorMessages.INVALID_URL)
+            call.reject(ErrorMessages.INVALID_URL, nil, nil, buildErrorObject(message: ErrorMessages.INVALID_URL))
             return
         }
 
@@ -51,7 +51,7 @@ public class RestInformationPlugin: CAPPlugin, CameraViewControllerDelegate {
             self.bridge!.viewController!.dismiss(animated: true)
         }
         if result.isEmpty {
-            self.call!.reject(ErrorMessages.EMPTY_RESPONSE)
+            self.call!.reject(ErrorMessages.EMPTY_RESPONSE, nil, nil, buildErrorObject(message: ErrorMessages.EMPTY_RESPONSE))
             return
         }
 
@@ -79,19 +79,25 @@ public class RestInformationPlugin: CAPPlugin, CameraViewControllerDelegate {
 
         if result.keys.contains(Keys.STATUS) && result[Keys.STATUS] as! Int == 200 {
             self.call!.resolve(result)
-        } else if result.keys.contains(Keys.ERROR) {
-            if result.keys.contains(Keys.STATUS) {
-                self.call!.reject(result[Keys.ERROR] as! String, result[Keys.STATUS] as? String)
-            } else {
-                self.call!.reject(result[Keys.ERROR] as! String)
-            }
         } else {
-            self.call!.reject(ErrorMessages.UNKNOWN_ERROR)
+            self.call!.reject(
+                result.keys.contains(Keys.ERROR) ? result[Keys.ERROR] as! String: ErrorMessages.UNKNOWN_ERROR,
+                result.keys.contains(Keys.STATUS) ? result[Keys.STATUS] as? String: nil,
+                nil,
+                result
+            )
         }
     }
 
     func onError(_ error: String) {
         self.bridge!.viewController!.dismiss(animated: false)
-        self.call!.reject(error)
+        self.call!.reject(error, nil, nil, buildErrorObject(message: error))
+    }
+    
+    func buildErrorObject(message: String) -> [String: Any] {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = DateFormatter.Style.medium
+        let timestamp = dateFormatter.string(from: Date())
+        return ["message": message, "timestamp": timestamp]
     }
 }
