@@ -57,7 +57,11 @@ function onSuccess(result) {
 function onFail(result) {
   const node = document.createElement('div');
   node.className = 'log_item';
-  node.textContent = `${result}`;
+  if ("data" in result) {
+    node.textContent = `${JSON.stringify(result.data, undefined, 2)}`;
+  } else {
+    node.textContent = `${result}`;
+  }
   document.getElementById('output').prepend(node);
 }
 
@@ -79,10 +83,11 @@ async function scan() {
       request: data,
       settings: options,
     });
-    console.log('result', result);
+    console.log('result', JSON.stringify(result, null, 2));
     onSuccess(result);
   } catch (error) {
-    console.log(error);
+    console.log("error", error)
+    console.log("error json", JSON.stringify(error, null, 2));
     onFail(error);
   }
 }
