@@ -16,6 +16,8 @@ import android.util.Size;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ProgressBar;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.AspectRatio;
 import androidx.camera.core.Camera;
@@ -48,6 +50,15 @@ public class CaptureActivity extends AppCompatActivity {
   private Preview preview;
   private boolean readyToTakePicture = true;
   private ScannerSettings scannerSettings;
+
+  private final ActivityResultLauncher<String> requestPermissionLauncher =
+    registerForActivityResult(new RequestPermission(), isGranted -> {
+      if (Boolean.TRUE.equals(isGranted)) {
+        startCamera();
+      } else {
+        finishWithError(ErrorMessages.NO_CAMERA_PERMISSION);
+      }
+    });
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +98,7 @@ public class CaptureActivity extends AppCompatActivity {
     if (checkSelfPermission(permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
       startCamera();
     } else {
-      finishWithError(ErrorMessages.NO_CAMERA_PERMISSION);
+      requestPermissionLauncher.launch(permission.CAMERA);
     }
 
     ProgressBar progressBar = new ProgressBar(CaptureActivity.this);
