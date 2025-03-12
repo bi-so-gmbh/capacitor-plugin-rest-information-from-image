@@ -53,7 +53,7 @@ public class ImageCaptureListener extends OnImageCapturedCallback {
       return;
     }
     ByteArrayOutputStream byteArrayOutputStream = imageToByteArrayOutputStream(image,
-      scannerSettings.getImageCompression() * 100, imageProxy.getImageInfo().getRotationDegrees());
+      (int) (scannerSettings.getImageCompression() * 100), imageProxy.getImageInfo().getRotationDegrees());
     String base64Image = ImageUtils.imageToBase64(byteArrayOutputStream);
 
     if (scannerSettings.getSaveImage()) {

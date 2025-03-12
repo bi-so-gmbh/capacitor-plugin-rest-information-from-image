@@ -39,7 +39,7 @@ public class ImageUtils {
     return BitmapFactory.decodeByteArray(clonedBytes, 0, clonedBytes.length);
   }
 
-  public static ByteArrayOutputStream imageToByteArrayOutputStream(Image image, double compression, int rotation) {
+  public static ByteArrayOutputStream imageToByteArrayOutputStream(Image image, int compression, int rotation) {
     Bitmap bitmap = switch (image.getFormat()) {
       case ImageFormat.JPEG -> rotateBitmap(jpegToBitmap(image), rotation);
       case 1 -> rotateBitmap(rgba8888ToBitmap(image), rotation);
@@ -48,7 +48,7 @@ public class ImageUtils {
     };
 
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-    bitmap.compress(CompressFormat.JPEG, 75, byteArrayOutputStream);
+    bitmap.compress(CompressFormat.JPEG, compression, byteArrayOutputStream);
 
     return byteArrayOutputStream;
   }
