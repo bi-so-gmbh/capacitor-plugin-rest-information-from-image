@@ -18,8 +18,6 @@ var capacitorRestInformationPlugin = (function (exports, core) {
 
     exports.RestInformation = RestInformation;
 
-    Object.defineProperty(exports, '__esModule', { value: true });
-
     return exports;
 
 })({}, capacitorExports);
