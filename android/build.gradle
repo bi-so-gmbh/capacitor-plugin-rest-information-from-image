@@ -1,6 +1,6 @@
 ext {
-    androidxCameraVersion = project.hasProperty('androidxCameraVersion') ? rootProject.ext.androidxCameraVersion : '1.3.4'
-    androidxConstraintLayoutVersion = project.hasProperty('androidxConstraintLayoutVersion') ? rootProject.ext.androidxConstraintLayoutVersion : '2.1.4'
+    androidxCameraVersion = project.hasProperty('androidxCameraVersion') ? rootProject.ext.androidxCameraVersion : '1.4.1'
+    androidxConstraintLayoutVersion = project.hasProperty('androidxConstraintLayoutVersion') ? rootProject.ext.androidxConstraintLayoutVersion : '2.2.1'
     androidxAppCompatVersion = project.hasProperty('androidxAppCompatVersion') ? rootProject.ext.androidxAppCompatVersion : '1.7.0'
 }
 
@@ -10,7 +10,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.5.2'
+        classpath 'com.android.tools.build:gradle:8.7.3'
     }
 }
 
@@ -19,9 +19,9 @@ apply plugin: 'com.android.library'
 android {
     namespace "com.biso.capacitor.plugins.rest.information.from.image"
     defaultConfig {
-        compileSdk project.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 33
+        compileSdk project.hasProperty('compileSdkVersion') ? rootProject.ext.compileSdkVersion : 35
         minSdkVersion project.hasProperty('minSdkVersion') ? rootProject.ext.minSdkVersion : 26
-        targetSdkVersion project.hasProperty('targetSdkVersion') ? rootProject.ext.targetSdkVersion : 34
+        targetSdkVersion project.hasProperty('targetSdkVersion') ? rootProject.ext.targetSdkVersion : 35
         versionCode 6
         versionName "2.0.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

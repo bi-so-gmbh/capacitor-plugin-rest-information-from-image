@@ -13,14 +13,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@capacitor/android": "^6.1.2",
-    "@capacitor/core": "^6.1.2",
-    "@capacitor/ios": "^6.1.2",
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/core": "^6.2.0",
+    "@capacitor/ios": "^6.2.0",
     "@biso_gmbh/capacitor-plugin-rest-information-from-image": "file:.."
   },
   "devDependencies": {
-    "@capacitor/cli": "^6.1.2",
-    "vite": "^5.4.9"
+    "@capacitor/cli": "^6.2.0",
+    "vite": "^6.2.1"
   },
   "author": "Nadine Seibel",
   "license": "MIT"
