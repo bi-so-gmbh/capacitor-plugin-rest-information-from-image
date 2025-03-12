@@ -65,7 +65,7 @@ public class ImageCaptureListener extends OnImageCapturedCallback {
         saveImageToDisk(byteArrayOutputStream, folder, fileName);
       } catch (IOException e) {
         Log.e(LOG_KEY, e.getMessage());
-        throw new RuntimeException(e);
+        throw new RuntimeException(e); //NOSONAR
       }
     }
 

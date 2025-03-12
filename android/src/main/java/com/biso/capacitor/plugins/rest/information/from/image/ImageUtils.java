@@ -66,10 +66,11 @@ public class ImageUtils {
   public static void saveImageToDisk(ByteArrayOutputStream byteArrayOutputStream, String folder, String fileName) {
     try {
       File folderAsFile = new File(folder);
-      folderAsFile.mkdirs();
-      File imageAsFile = new File(folderAsFile, fileName);
-      OutputStream outputStream = new FileOutputStream(imageAsFile);
-      byteArrayOutputStream.writeTo(outputStream);
+      if (folderAsFile.mkdirs()) {
+        File imageAsFile = new File(folderAsFile, fileName);
+        OutputStream outputStream = new FileOutputStream(imageAsFile);
+        byteArrayOutputStream.writeTo(outputStream);
+      }
     } catch (IOException e) {
       Log.e("SaveToDisk", e.getMessage(), e);
     }

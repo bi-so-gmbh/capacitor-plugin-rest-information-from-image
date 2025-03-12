@@ -77,17 +77,13 @@ public class CaptureActivity extends AppCompatActivity {
       finishWithError(ErrorMessages.NO_CAMERA);
     }
 
+    HttpRequest httpRequest;
     if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
       scannerSettings = getIntent().getParcelableExtra(Keys.SETTINGS, ScannerSettings.class);
+      httpRequest = getIntent().getParcelableExtra(Keys.REQUEST, HttpRequest.class);
     } else {
       // noinspection deprecation
       scannerSettings = getIntent().getParcelableExtra(Keys.SETTINGS); // NOSONAR
-    }
-
-    HttpRequest httpRequest;
-    if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
-      httpRequest = getIntent().getParcelableExtra(Keys.REQUEST, HttpRequest.class);
-    } else {
       // noinspection deprecation
       httpRequest = getIntent().getParcelableExtra(Keys.REQUEST); // NOSONAR
     }

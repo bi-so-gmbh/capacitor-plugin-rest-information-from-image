@@ -27,6 +27,7 @@ import java.util.Objects;
 import org.json.JSONException;
 
 @CapacitorPlugin(name = "RestInformation")
+@SuppressWarnings("unused")
 public class RestInformationPlugin extends Plugin {
   public static final String LOG_TAG = "RestInformationPlugin";
   private ScannerSettings scannerSettings;
@@ -103,12 +104,12 @@ public class RestInformationPlugin extends Plugin {
       return;
     }
     Intent data = result.getData();
+    if (data == null) {
+      call.reject(ErrorMessages.CANCELLED, buildErrorObject(ErrorMessages.CANCELLED));
+      return;
+    }
     // finishWithSuccess used (ImageCaptureListener via RestDataListener)
     if (result.getResultCode() == CommonStatusCodes.SUCCESS) {
-      if (data == null) {
-        call.reject(ErrorMessages.CANCELLED, buildErrorObject(ErrorMessages.CANCELLED));
-        return;
-      }
       JSObject scanResult = new JSObject(data.getStringExtra(Keys.RESULT));
       if (scanResult.length() == 0) {
         call.reject(ErrorMessages.EMPTY_RESPONSE, buildErrorObject(ErrorMessages.EMPTY_RESPONSE));
@@ -116,34 +117,37 @@ public class RestInformationPlugin extends Plugin {
       }
 
       if (!scanResult.has(Keys.ERROR)) {
-        if (scannerSettings.isBeepOnSuccess()) {
-          mediaPlayer.start();
-        }
-
-        if (scannerSettings.isVibrateOnSuccess()) {
-          int duration = 200;
-          vibrator.vibrate(
-              VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE));
-        }
+        notifyOnSuccess();
       }
 
       if (scanResult.has(Keys.STATUS) && scanResult.getInt(Keys.STATUS) == 200) {
         call.resolve(scanResult);
-      } else {
-        call.reject(
-          scanResult.has(Keys.ERROR) ? scanResult.getString(Keys.ERROR): ErrorMessages.UNKNOWN_ERROR,
-          scanResult.has(Keys.STATUS) ? String.valueOf(scanResult.getInt(Keys.STATUS)): null,
-          scanResult
-        );
+        return;
       }
+      call.reject(
+        scanResult.has(Keys.ERROR) ? scanResult.getString(Keys.ERROR): ErrorMessages.UNKNOWN_ERROR,
+        scanResult.has(Keys.STATUS) ? String.valueOf(scanResult.getInt(Keys.STATUS)): null,
+        scanResult
+      );
+      return;
     }
     // finishWithError used
-    else {
-      String err = ErrorMessages.UNKNOWN_ERROR;
-      if (data != null && (data.hasExtra(Keys.ERROR))) {
-          err = data.getStringExtra(Keys.ERROR);
-      }
-      call.reject(err, buildErrorObject(err));
+    String err = ErrorMessages.UNKNOWN_ERROR;
+    if (data.hasExtra(Keys.ERROR)) {
+        err = data.getStringExtra(Keys.ERROR);
+    }
+    call.reject(err, buildErrorObject(err));
+  }
+
+  private void notifyOnSuccess() {
+    if (scannerSettings.isBeepOnSuccess()) {
+      mediaPlayer.start();
+    }
+
+    if (scannerSettings.isVibrateOnSuccess()) {
+      int duration = 200;
+      vibrator.vibrate(
+        VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE));
     }
   }
 
@@ -152,5 +156,13 @@ public class RestInformationPlugin extends Plugin {
     errorObject.put(Keys.ERROR, message);
     errorObject.put("timestamp", LocalDateTime.now());
     return  errorObject;
+  }
+
+  @Override
+  public void handleOnDestroy() {
+    if (mediaPlayer != null) {
+      mediaPlayer.stop();
+      mediaPlayer.release();
+    }
   }
 }
